@@ -8,11 +8,12 @@ GameBoard::GameBoard(QWidget *parent)
     : QWidget(parent)
 {
 
-  timerId = startTimer(10);
+  timerId = startTimer(20);
   gameStarted = true;
   floorCount=0;
   floors = new QMap<int,Floor *>;
   safes = new QMap<int,Safe *>;
+  mario = new Mario(245,340);
   /*x = 0;
   gameOver = FALSE;
   gameWon = FALSE;
@@ -29,11 +30,11 @@ GameBoard::GameBoard(QWidget *parent)
       k++;
     }
   }*/
-  for (int i=0; i<12; i++) {
+  for (int i=0; i<11; i++) {
       for (int j=0; j<2; j++) {
   Floor* k =new Floor(i*50,450-j*50);
   floors->insert(floorCount,k);
-  ++floorCount;
+  floorCount++;
       }
   }
 }
@@ -55,6 +56,7 @@ GameBoard::~GameBoard() {
     delete floors;
     safes->clear();
     delete safes;
+    delete mario;
  /*delete ball;
  delete paddle;
  for (int i=0; i<30; i++) {
@@ -66,6 +68,7 @@ void GameBoard::paintEvent(QPaintEvent *event)
 {
   QPainter painter(this);
 
+   painter.drawImage(mario->getRect(),mario->getImage());
   /*if (gameOver) {
     QFont font("Courier", 15, QFont::DemiBold);
     QFontMetrics fm(font);
@@ -102,6 +105,8 @@ void GameBoard::paintEvent(QPaintEvent *event)
         painter.drawImage(e.value()->getRect(),e.value()->getImage());
         ++e;
     }
+
+
     /*painter.drawImage(ball->getRect(),
         ball->getImage());
     painter.drawImage(paddle->getRect(),
@@ -129,44 +134,59 @@ void GameBoard::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Left:
         {
+
+        if(mario->getRect().x()<=246 && mario->getRect().x()>4){
+            int x = mario->getRect().x();
+                 for (int i=1; i<=10; i++)
+                      mario->moveLeft(x--);
+        }
+        /*else {
             int x0=0;
             int y0=0;
             QMap< int,Floor *>::const_iterator i = floors->constBegin();
             while (i != floors->constEnd()) {
-                if(floorCount/2>12){
-                    x0=i.value()->getRect().x();
-                    for (int k=1; k<=5; k++)
+                x0=i.value()->getRect().x();
+                for (int k=1; k<=5; k++)
                     i.value()->moveRight(x0++);
-                }
                 ++i;
             }
             x0=0;
             QMap< int,Floor *>::const_iterator i0= floors->constBegin();
             while (i0 != floors->constEnd()) {
-                if(i0.value()->getRect().x()>550){
-                   if(floorCount/2>12){
-                        i0.value()->setDestroyed(true);
-                        x0=i0.value()->getRect().x();
-                        y0=i0.value()->getRect().y();
-                        Floor* k =new Floor(x0-11*50,y0);
-                        floors->insert(floorCount-12,k);
-                        --floorCount;
-                    }
+                if(i0.value()->getRect().x()>500){
+                i0.value()->setDestroyed(true);
+                x0=i0.value()->getRect().x();
+                y0=i0.value()->getRect().y();
+                Floor* k =new Floor(x0-11*50,y0);
+                floors->insert(floorCount-25,k);
+                qDebug() << "create Floor:" << floorCount-25 ;
+                floorCount--;
             }
             ++i0;
-        }
+            }
+
+        }*/
+
 
 
         }
         break;
+
     case Qt::Key_Right:
         {
+
+        if(mario->getRect().x()<245 && mario->getRect().x()>=-2){
+            int x = mario->getRect().x();
+                 for (int i=1; i<=10; i++)
+                      mario->moveRight(x++);
+        }
+        else{
             int x0=0;
             int y0=0;
             QMap< int,Floor *>::const_iterator i = floors->constBegin();
             while (i != floors->constEnd()) {
             x0=i.value()->getRect().x();
-            for (int k=1; k<=5; k++)
+            for (int k=1; k<=10; k++)
             i.value()->moveLeft(x0--);
             ++i;
          }
@@ -179,10 +199,15 @@ void GameBoard::keyPressEvent(QKeyEvent *event)
                     y0=i0.value()->getRect().y();
                     Floor* k =new Floor(x0+11*50,y0);
                     floors->insert(floorCount,k);
-                    ++floorCount;
+                    qDebug() << "create Floor:" << floorCount ;
+                    floorCount++;
                 }
                 ++i0;
             }
+
+
+        }
+
         }
         break;
    /* case Qt::Key_P:

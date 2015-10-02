@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
   GameBoard window;
 
-  window.setWindowTitle("Breakout");
+  window.setWindowTitle("Mario Game");
   window.show();
   center(window);
 

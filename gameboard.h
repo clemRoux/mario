@@ -7,6 +7,9 @@
 
 #include "safe.h"
 #include "floor.h"
+#include "mario.h"
+
+
 
 class GameBoard : public QWidget
 {
@@ -34,6 +37,7 @@ class GameBoard : public QWidget
     int timerId;
     bool gameStarted;
     int floorCount;
+    Mario *mario;
     /*int x;
     int timerId;
     Ball *ball;
