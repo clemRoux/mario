@@ -19,10 +19,12 @@ SOURCES += main.cpp \
     brick.cpp \
     floor.cpp \
     safe.cpp \
-    mario.cpp
+    mario.cpp \
+    person.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
     floor.h \
     safe.h \
-    mario.h
+    mario.h \
+    person.h

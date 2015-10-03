@@ -1,20 +1,13 @@
 #ifndef MARIO_H
 #define MARIO_H
 
-#include "brick.h"
+#include "person.h"
 
-class Mario : public Brick
+class Mario : public Person
 {
 public:
   Mario(int, int);
   ~Mario();
-
-public:
-
-
-private:
-
-
 };
 
 #endif // MARIO_H

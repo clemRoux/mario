@@ -8,28 +8,15 @@ GameBoard::GameBoard(QWidget *parent)
     : QWidget(parent)
 {
 
-  timerId = startTimer(20);
+  timerId = startTimer(15);
   gameStarted = true;
   floorCount=0;
   floors = new QMap<int,Floor *>;
   safes = new QMap<int,Safe *>;
-  mario = new Mario(245,340);
-  /*x = 0;
-  gameOver = FALSE;
-  gameWon = FALSE;
-  paused = FALSE;
-  gameStarted = FALSE;
-  ball = new Ball();
-  paddle = new Paddle();
-
-
-  int k = 0;
-  for (int i=0; i<5; i++) {
-    for (int j=0; j<6; j++) {
-      bricks[k] = new Brick(j*40+30, i*10+50);
-      k++;
-    }
-  }*/
+  mario = new Mario(200,340);
+  dirY=0;
+  moveL=false;
+  moveR=false;
   for (int i=0; i<11; i++) {
       for (int j=0; j<2; j++) {
   Floor* k =new Floor(i*50,450-j*50);
@@ -40,7 +27,7 @@ GameBoard::GameBoard(QWidget *parent)
 }
 
 GameBoard::~GameBoard() {
-
+    killTimer(timerId);
     QMap< int,Floor *>::const_iterator i = floors->constBegin();
     QMap< int,Safe *>::const_iterator e = safes->constBegin();
 
@@ -57,11 +44,6 @@ GameBoard::~GameBoard() {
     safes->clear();
     delete safes;
     delete mario;
- /*delete ball;
- delete paddle;
- for (int i=0; i<30; i++) {
-   delete bricks[i];
- }*/
 }
 
 void GameBoard::paintEvent(QPaintEvent *event)
@@ -105,25 +87,20 @@ void GameBoard::paintEvent(QPaintEvent *event)
         painter.drawImage(e.value()->getRect(),e.value()->getImage());
         ++e;
     }
-
-
-    /*painter.drawImage(ball->getRect(),
-        ball->getImage());
-    painter.drawImage(paddle->getRect(),
-        paddle->getImage());
-
-    for (int i=0; i<30; i++) {
-        if (!bricks[i]->isDestroyed())
-          painter.drawImage(bricks[i]->getRect(),
-              bricks[i]->getImage());
-    }
-  }*/
 }
 
 void GameBoard::timerEvent(QTimerEvent *event)
 {
- /* ball->autoMove();
-  checkCollision();*/
+ if(!intersect() && dirY>=0 && !moveR && !moveL)
+      mario->gravity();
+ else if(moveR)
+     movementRight();
+ else if(moveL)
+     movementLeft();
+ else if(dirY<0 && !moveR && !moveL){
+      mario->jump(dirY);
+      dirY+= 0.01;
+ }
   removeDestroyed();
   repaint();
 }
@@ -131,85 +108,21 @@ void GameBoard::timerEvent(QTimerEvent *event)
 
 void GameBoard::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-    case Qt::Key_Left:
-        {
+    if(event->key() == Qt::Key_Space && intersect())
+    {
+        dirY=-15;
+    }
+    else if(event->key() == Qt::Key_Right)
+    {
+        moveR=true;
+    }
 
-        if(mario->getRect().x()<=246 && mario->getRect().x()>4){
-            int x = mario->getRect().x();
-                 for (int i=1; i<=10; i++)
-                      mario->moveLeft(x--);
-        }
-        /*else {
-            int x0=0;
-            int y0=0;
-            QMap< int,Floor *>::const_iterator i = floors->constBegin();
-            while (i != floors->constEnd()) {
-                x0=i.value()->getRect().x();
-                for (int k=1; k<=5; k++)
-                    i.value()->moveRight(x0++);
-                ++i;
-            }
-            x0=0;
-            QMap< int,Floor *>::const_iterator i0= floors->constBegin();
-            while (i0 != floors->constEnd()) {
-                if(i0.value()->getRect().x()>500){
-                i0.value()->setDestroyed(true);
-                x0=i0.value()->getRect().x();
-                y0=i0.value()->getRect().y();
-                Floor* k =new Floor(x0-11*50,y0);
-                floors->insert(floorCount-25,k);
-                qDebug() << "create Floor:" << floorCount-25 ;
-                floorCount--;
-            }
-            ++i0;
-            }
-
-        }*/
+    else if(event->key() == Qt::Key_Left)
+    {
+        moveL=true;
+    }
 
 
-
-        }
-        break;
-
-    case Qt::Key_Right:
-        {
-
-        if(mario->getRect().x()<245 && mario->getRect().x()>=-2){
-            int x = mario->getRect().x();
-                 for (int i=1; i<=10; i++)
-                      mario->moveRight(x++);
-        }
-        else{
-            int x0=0;
-            int y0=0;
-            QMap< int,Floor *>::const_iterator i = floors->constBegin();
-            while (i != floors->constEnd()) {
-            x0=i.value()->getRect().x();
-            for (int k=1; k<=10; k++)
-            i.value()->moveLeft(x0--);
-            ++i;
-         }
-            x0=0;
-            QMap< int,Floor *>::const_iterator i0= floors->constBegin();
-            while (i0 != floors->constEnd()) {
-                if(i0.value()->getRect().x()<-50){
-                    i0.value()->setDestroyed(true);
-                    x0=i0.value()->getRect().x();
-                    y0=i0.value()->getRect().y();
-                    Floor* k =new Floor(x0+11*50,y0);
-                    floors->insert(floorCount,k);
-                    qDebug() << "create Floor:" << floorCount ;
-                    floorCount++;
-                }
-                ++i0;
-            }
-
-
-        }
-
-        }
-        break;
    /* case Qt::Key_P:
         {
           pauseGame();
@@ -220,15 +133,14 @@ void GameBoard::keyPressEvent(QKeyEvent *event)
           startGame();
         }
         break;*/
-    case Qt::Key_Escape:
+    else if (event->key() == Qt::Key_Escape)
         {
           stopGame();
           qApp->exit();
         }
-        break;
-    default:
+
+    else
         QWidget::keyPressEvent(event);
-    }
 }
 
 void GameBoard::stopGame()
@@ -248,6 +160,83 @@ void GameBoard::removeDestroyed()
         }
     }
 }
+
+void GameBoard::movementLeft()
+{
+    if(mario->getRect().x()<250 && mario->getRect().x()>=5)
+    {
+        int x0=mario->getRect().x();
+       if (intersect())
+       {
+              mario->moveLeft(x0-10, 0);
+       }
+       else
+
+           mario->moveLeft(x0-10 , dirY);
+    }
+    moveL=false;
+}
+
+void GameBoard::movementRight()
+{
+    if(mario->getRect().x()<230 && mario->getRect().x()>=-2)
+    {
+       int x0=mario->getRect().x();
+       for (int i=1; i<=10; i++)
+       mario->moveRight(x0++,0);
+    }
+    else{
+        int x0=0;
+        int y0=0;
+        QMap< int,Floor *>::const_iterator i = floors->constBegin();
+        while (i != floors->constEnd()) {
+            x0=i.value()->getRect().x();
+            for (int k=1; k<=10; k++)
+            i.value()->moveLeft(x0--);
+            ++i;
+        }
+        x0=0;
+        QMap< int,Floor *>::const_iterator i0= floors->constBegin();
+        while (i0 != floors->constEnd()) {
+            if(i0.value()->getRect().x()<-50){
+                i0.value()->setDestroyed(true);
+                x0=i0.value()->getRect().x();
+                y0=i0.value()->getRect().y();
+                Floor* k =new Floor(x0+11*50,y0);
+                floors->insert(floorCount,k);
+                qDebug() << "create Floor:" << floorCount ;
+                floorCount++;
+            }
+            ++i0;
+        }
+    }
+    moveR=false;
+}
+
+bool GameBoard::intersect()
+{
+    QMap< int,Floor *>::const_iterator i = floors->constBegin();
+    while (i != floors->constEnd()) {
+        if ((mario->getRect()).intersects(i.value()->getRect())){
+            return true;
+
+        }
+        ++i;
+    }
+    return false;
+}
+
+/*void GameBoard::movementSpace()
+{
+    int y=0;
+    int ymax = mario->getRect().y()-200;
+    isJumping=true;
+    while(mario->getRect().y()>ymax){
+        y = mario->getRect().y()-1;
+        mario->moveUp(y);
+    }
+    isJumping=false;
+}*/
 
 /*void GameBoard::startGame()
 {

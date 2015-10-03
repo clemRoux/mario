@@ -7,13 +7,6 @@ class Floor : public Brick
 public:
   Floor(int, int);
   ~Floor();
-
-public:
-
-
-private:
-
-
 };
 
 #endif // FLOOR_H

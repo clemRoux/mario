@@ -39,12 +39,6 @@ void Brick::setDestroyed(bool destr)
   destroyed = destr;
 }
 
-void Brick::resetState(int x,int y){
-
-  rect.moveTo(x, y);
-
-}
-
 void Brick::moveLeft(int left)
 {
     rect.moveTo(left, rect.top());

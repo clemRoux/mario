@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>images/Safe.png</file>
         <file>images/Floor.png</file>
-        <file>images/Mario.png</file>
         <file>images/walkMario1.png</file>
         <file>images/walkMario2.png</file>
         <file>images/walkMario3.png</file>

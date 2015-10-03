@@ -1,9 +1,13 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/plane.png</file>
-        <file>images/shoot.png</file>
-        <file>images/enemy.png</file>
-        <file>images/explo.png</file>
-        <file>images/sky.png</file>
+        <file>images/Safe.png</file>
+        <file>images/Floor.png</file>
+        <file>images/Mario.png</file>
+        <file>images/walkMario1.png</file>
+        <file>images/walkMario2.png</file>
+        <file>images/walkMario3.png</file>
+        <file>images/walkMario4.png</file>
+        <file>images/walkMario5.png</file>
+        <file>images/walkMario6.png</file>
     </qresource>
 </RCC>

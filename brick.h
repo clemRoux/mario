@@ -13,7 +13,6 @@ class Brick
     ~Brick();
 
   public:
-    void resetState(int,int);
     bool isDestroyed();
     void setDestroyed(bool);
     QRect getRect();
@@ -25,7 +24,6 @@ class Brick
   private:
     QImage image;
     QRect rect;
-    int position;
     bool destroyed;
 
 };

@@ -27,6 +27,12 @@ class GameBoard : public QWidget
     void keyPressEvent(QKeyEvent *event);
     void stopGame();
     void removeDestroyed();
+    void movementRight();
+    void movementLeft();
+    bool intersect();
+    bool moveR;
+    bool moveL;
+    //void movementSpace();
 
     /*void startGame();
     void pauseGame();
@@ -38,6 +44,7 @@ class GameBoard : public QWidget
     bool gameStarted;
     int floorCount;
     Mario *mario;
+    int dirY;
     /*int x;
     int timerId;
     Ball *ball;
