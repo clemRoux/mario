@@ -36,15 +36,6 @@ bool Brick::isDestroyed()
 
 void Brick::setDestroyed(bool destr)
 {
-<<<<<<< HEAD
-  destroyed = destr;
-}
-
-void Brick::moveBrick(int x)
-{
-    rect.moveTo(x, rect.top());
-}
-=======
     destroyed = destr;
 }
 
@@ -53,4 +44,3 @@ void Brick::moveBrick(int x)
     rect.moveTo(x, rect.top());
 }
 
->>>>>>> b7e12b5842d2b65c6d7c60266edb09301709941c
