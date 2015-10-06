@@ -3,43 +3,48 @@
 
 Person::Person(int x, int y, QString picture)
 {
-  image.load(picture);
-  dead = false;
-  rect = image.rect();
-  rect.translate(x, y);
+    image.load(picture);
+    dead = false;
+    rect = image.rect();
+    rect.translate(x, y);
 }
 
-Person::~Person() {
-
-   std::cout << ("Person deleted\n");
+Person::~Person()
+{
+    std::cout << ("Person deleted\n");
 }
 
 QRect Person::getRect()
 {
-  return rect;
+    return rect;
 }
 
 void Person::setRect(QRect rct)
 {
-  rect = rct;
+    rect = rct;
 }
 
 QImage & Person::getImage()
 {
-  return image;
+    return image;
 }
 
 bool Person::isDead()
 {
-  return dead;
+    return dead;
 }
 
 void Person::setDead(bool destr)
 {
-  dead = destr;
+    dead = destr;
 }
 
 void Person::move(int x ,int y)
 {
     rect.moveTo(x, y);
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b7e12b5842d2b65c6d7c60266edb09301709941c

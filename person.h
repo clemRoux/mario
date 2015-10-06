@@ -9,6 +9,7 @@ class Person
 {
 
   public:
+
     Person(int, int , QString );
     ~Person();
     bool isDead();
@@ -16,9 +17,14 @@ class Person
     QRect getRect();
     void setRect(QRect);
     QImage & getImage();
+<<<<<<< HEAD
     void move(int , int);
+=======
+    void move(int , int );
+>>>>>>> b7e12b5842d2b65c6d7c60266edb09301709941c
 
   private:
+
     QImage image;
     QRect rect;
     bool dead;
