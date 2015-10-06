@@ -5,6 +5,7 @@
 class Safe : public Brick
 {
 public:
+
   Safe(int, int);
   ~Safe();
 };

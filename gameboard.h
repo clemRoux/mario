@@ -16,44 +16,39 @@ class GameBoard : public QWidget
   Q_OBJECT
 
   public:
+
     GameBoard(QWidget *parent = 0);
     ~GameBoard();
     QMap<int,Safe*> *safes;
     QMap<int,Floor*> *floors;
 
   protected:
+
     void paintEvent(QPaintEvent *event);
     void timerEvent(QTimerEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
     void stopGame();
     void removeDestroyed();
-    void movementRight();
-    void movementLeft();
+    void movementMario();
+    void movementMap();
     bool intersect();
-    bool moveR;
-    bool moveL;
-    //void movementSpace();
 
-    /*void startGame();
-    void pauseGame();
-    void victory();
-    void checkCollision();*/
 
   private:
-    int timerId;
-    bool gameStarted;
-    int floorCount;
-    Mario *mario;
-    int dirY;
-    /*int x;
-    int timerId;
-    Ball *ball;
-    Paddle *paddle;
-    Brick * bricks[30];
-    bool gameOver;
-    bool gameWon;
-    bool gameStarted;
-    bool paused;*/
 
+    int timerId;
+    int xRelatif;
+    int yRelatif;
+    int safeCount;
+    int moveCount;
+    int floorCount;
+
+    bool gameStarted;
+    bool moveR;
+    bool moveL;
+    bool isJumping;
+
+    Mario *mario;
 };
 #endif // GAMEBOARD_H

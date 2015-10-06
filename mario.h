@@ -6,8 +6,9 @@
 class Mario : public Person
 {
 public:
-  Mario(int, int);
-  ~Mario();
+
+    Mario(int, int);
+    ~Mario();
 };
 
 #endif // MARIO_H

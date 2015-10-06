@@ -5,6 +5,7 @@
 class Floor : public Brick
 {
 public:
+
   Floor(int, int);
   ~Floor();
 };
