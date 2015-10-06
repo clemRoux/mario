@@ -11,17 +11,12 @@ class Person
   public:
     Person(int, int , QString );
     ~Person();
-
-  public:
     bool isDead();
     void setDead(bool);
     QRect getRect();
     void setRect(QRect);
     QImage & getImage();
-    void moveLeft(int , double);
-    void moveRight(int ,double);
-    void gravity();
-    void jump(double);
+    void move(int , int);
 
   private:
     QImage image;

@@ -39,35 +39,7 @@ void Person::setDead(bool destr)
   dead = destr;
 }
 
-void Person::gravity()
+void Person::move(int x ,int y)
 {
-   double v_y = 4;
-   double y=rect.top();
-    y += v_y;
-    v_y += 0.08;
-    rect.moveTo(rect.left(),y);
-}
-
-void Person::moveLeft(int left ,double dir)
-{
-    double v_y = dir;
-    double y=rect.top();
-     y += v_y;
-     v_y += 0.08;
-    rect.moveTo(left, y);
-}
-
-void Person::moveRight(int right ,double dir)
-{
-    double v_y = dir;
-    double y=rect.top();
-     y += v_y;
-     v_y += 0.08;
-    rect.moveTo(right, y);
-}
-
-void Person::jump(double y)
-{
-    if(y<0)
-    rect.moveTo(rect.left(),rect.top()-10);
+    rect.moveTo(x, y);
 }

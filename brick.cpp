@@ -39,13 +39,7 @@ void Brick::setDestroyed(bool destr)
   destroyed = destr;
 }
 
-void Brick::moveLeft(int left)
+void Brick::moveBrick(int x)
 {
-    rect.moveTo(left, rect.top());
+    rect.moveTo(x, rect.top());
 }
-
-void Brick::moveRight(int right)
-{
-    rect.moveTo(right, rect.top());
-}
-
