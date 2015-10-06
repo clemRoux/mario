@@ -23,7 +23,6 @@ GameBoard::GameBoard(Model *model, QWidget *parent)
 GameBoard::~GameBoard()
 {
     killTimer(timerId);
-    delete model;
 }
 
 void GameBoard::paintEvent(QPaintEvent *event)
