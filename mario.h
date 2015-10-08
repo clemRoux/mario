@@ -9,7 +9,11 @@ public:
 
     Mario(int, int);
     ~Mario();
+    int getGoldNumber(){ return goldNumber; }
+    void setGoldNumber(int goldNumber){ this->goldNumber = goldNumber; }
 
+private:
+    int goldNumber;
 
 };
 

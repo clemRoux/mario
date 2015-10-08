@@ -1,12 +1,17 @@
 #include "person.h"
 #include <iostream>
+#include <QDebug>
+#include <QRect>
 
 Person::Person(int x, int y, QString picture)
 {
-    image.load(picture);
+    //image.load(picture);
     dead = false;
-    rect = image.rect();
-    rect.translate(x, y);
+    this->imageMap = QPixmap(picture);
+    qDebug() << imageMap.size();
+    rect = QRect(x, y, 39, 70);
+    //rect = image.rect();
+    //rect.translate(x, y);
 }
 
 Person::~Person()
@@ -22,11 +27,6 @@ QRect Person::getRect()
 void Person::setRect(QRect rct)
 {
     rect = rct;
-}
-
-QImage & Person::getImage()
-{
-    return image;
 }
 
 bool Person::isDead()

@@ -17,6 +17,7 @@ public:
     QRect getHeartSize(){ return heartSize; }
     QImage getGold(){ return gold; }
     QRect getGoldSize(){ return goldSize; }
+    QPoint getGoldPosition(){ return goldPosition; }
 private:
     QRect rect;
     QColor color;
@@ -25,6 +26,7 @@ private:
     QImage gold;
     QRect heartSize;
     QRect goldSize;
+    QPoint goldPosition;
 };
 
 #endif // HEADER_H

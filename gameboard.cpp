@@ -4,11 +4,12 @@
 #include <QDebug>
 #include "model.h"
 
+
 GameBoard::GameBoard(Model *model, QWidget *parent)
     : model(model), QWidget(parent)
 {
     this->model = model;
-    timerId = startTimer(5);
+    timerId = startTimer(10);
     gameStarted = true;
     moveL=false;
     moveR=false;
@@ -18,6 +19,7 @@ GameBoard::GameBoard(Model *model, QWidget *parent)
     safeCount=0;
     moveCount=0;
     isSplashScreen = true;
+    setIterBackground(0);
 }
 
 GameBoard::~GameBoard()
@@ -35,7 +37,6 @@ void GameBoard::paintEvent(QPaintEvent *event)
         ++b;
     }
 
-    painter.drawImage(model->getMario()->getRect(), model->getMario()->getImage());
 
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
     QMap< int,Safe *>::const_iterator e = model->getSafes()->constBegin();
@@ -50,11 +51,20 @@ void GameBoard::paintEvent(QPaintEvent *event)
         ++e;
     }
 
+    //painter.drawImage(model->getMario()->getRect(), model->getMario()->getImage());
+    //painter.drawPixmap(200, 200, 400, 400, model->getMario()->getImageMap());
+
+    QRect sourceRect = QRect(currentFrame, 2, 39, 70);
+    painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getImageMap(), sourceRect);
+
 
     //painter.fillRect(model->getHeader()->getRect(), model->getHeader()->getColor());
 
     painter.drawImage(model->getHeader()->getRect().width() - 200, model->getHeader()->getRect().height() / 8, model->getHeader()->getGold());
-    painter.drawText(model->getHeader()->getRect().center(), "x10");
+    painter.setFont(QFont("Tahoma", 12, -1, false));
+    QString goldText = "x" + QString::number(model->getMario()->getGoldNumber());
+    //model->getMario()->getGoldNumber()
+    painter.drawText(model->getHeader()->getGoldPosition(), goldText);
 
     for(int i = 0 ; i < model->getMario()->getLife() ; i++)
         painter.drawImage(model->getHeader()->getHeart().size().height() * i, 0, model->getHeader()->getHeart());
@@ -215,6 +225,15 @@ void GameBoard::movementMario()
 
         }
         model->getMario()->move(x, y);
+
+        if(moveR && tempMove == 10){
+            currentFrame += 90;
+            if (currentFrame >= 810 )
+                currentFrame = 2;
+            tempMove = 0;
+        }
+        else if(moveR)
+            tempMove++;
     }
     if(!intersect() && !isJumping){
         y = y + 2;
@@ -246,10 +265,21 @@ void GameBoard::movementMap()
     }
 
     QMap< int,Background *>::const_iterator k = model->getBackground()->constBegin();
-    while (k != model->getBackground()->constEnd()) {
-        x0=k.value()->getRect().x();
-        k.value()->moveBrick(x0-1);
-        ++k;
+    if(getIterBackground() == 4){
+        while (k != model->getBackground()->constEnd()) {
+            x0=k.value()->getRect().x();
+            k.value()->moveBrick(x0-1);
+            ++k;
+        }
+        setIterBackground(0);
+    }
+    else{
+        while (k != model->getBackground()->constEnd()) {
+            x0=k.value()->getRect().x();
+            k.value()->moveBrick(x0);
+            ++k;
+        }
+        setIterBackground(getIterBackground() + 1);
     }
 
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();

@@ -17,5 +17,7 @@
         <file>images/gold_big.png</file>
         <file>images/gold_small.png</file>
         <file>images/mario_graphics1.png</file>
+        <file>images/mario_sprites.png</file>
+        <file>images/mario_walk_sprites.png</file>
     </qresource>
 </RCC>

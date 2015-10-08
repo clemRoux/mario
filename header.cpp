@@ -2,7 +2,7 @@
 
 Header::Header()
 {
-    this->rect = QRect(0, 0, 600, 40);
+    this->rect = QRect(0, 0, 700, 40);
     this->color = QColor(Qt::white);
     this->text = QString("vie");
     this->heart = QImage();
@@ -10,4 +10,5 @@ Header::Header()
     this->heartSize = heart.rect();
     gold.load(":images/gold_small.png");
     this->goldSize = gold.rect();
+    this->goldPosition = QPoint(this->getRect().width() - 170, this->getRect().height() - 15);
 }

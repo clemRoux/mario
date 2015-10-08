@@ -20,6 +20,8 @@ class GameBoard : public QWidget
 public:
     GameBoard(Model *model, QWidget *parent = 0);
     ~GameBoard();
+    inline int getIterBackground(){ return this->iterBackground; }
+    inline void setIterBackground(int iterBackground){ this->iterBackground = iterBackground; }
 
   protected:
     void paintEvent(QPaintEvent *event);
@@ -49,6 +51,8 @@ private:
     bool moveL;
     bool isJumping;
     bool isSplashScreen;
-
+    int iterBackground;
+    float currentFrame = 2;
+    int tempMove = 0;
 };
 #endif // GAMEBOARD_H
