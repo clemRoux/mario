@@ -30,15 +30,15 @@ public:
     void removeDestroyed();
     void movementMario();
     void movementMap();
+    void movementBackground();
     bool intersect();
+    void splashScreen();
 
 
 private:
     Model *model;
     int timerId;
     bool gameStarted;
-
-  private:
 
     int xRelatif;
     int yRelatif;
@@ -48,6 +48,7 @@ private:
     bool moveR;
     bool moveL;
     bool isJumping;
+    bool isSplashScreen;
 
 };
 #endif // GAMEBOARD_H

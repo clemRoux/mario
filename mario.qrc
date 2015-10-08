@@ -8,5 +8,14 @@
         <file>images/walkMario4.png</file>
         <file>images/walkMario5.png</file>
         <file>images/walkMario6.png</file>
+        <file>images/floor.png</file>
+        <file>images/floor2.png</file>
+        <file>images/go.png</file>
+        <file>images/heart.png</file>
+        <file>images/background.png</file>
+        <file>images/floor_uni.png</file>
+        <file>images/gold_big.png</file>
+        <file>images/gold_small.png</file>
+        <file>images/mario_graphics1.png</file>
     </qresource>
 </RCC>

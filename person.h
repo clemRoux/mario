@@ -13,17 +13,19 @@ class Person
     Person(int, int , QString );
     ~Person();
     bool isDead();
-    void setDead(bool);
+    inline void setDead(bool);
     QRect getRect();
-    void setRect(QRect);
+    inline void setRect(QRect);
     QImage & getImage();
     void move(int , int);
+    inline int getLife(){ return life; }
+    inline void setLife(int life){ this->life = life; }
 
   private:
-
     QImage image;
     QRect rect;
     bool dead;
+    int life = 5;
 
 };
 

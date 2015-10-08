@@ -21,7 +21,10 @@ SOURCES += main.cpp \
     safe.cpp \
     mario.cpp \
     person.cpp \
-    model.cpp
+    model.cpp \
+    splashscreen.cpp \
+    header.cpp \
+    background.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -29,4 +32,9 @@ HEADERS  += gameboard.h \
     safe.h \
     mario.h \
     person.h \
-    model.h
+    model.h \
+    splashscreen.h \
+    header.h \
+    background.h
+
+DISTFILES +=

@@ -17,7 +17,7 @@ GameBoard::GameBoard(Model *model, QWidget *parent)
     yRelatif = 0;
     safeCount=0;
     moveCount=0;
-
+    isSplashScreen = true;
 }
 
 GameBoard::~GameBoard()
@@ -28,10 +28,18 @@ GameBoard::~GameBoard()
 void GameBoard::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+
+    QMap< int,Background *>::const_iterator b = model->getBackground()->constBegin();
+    while (b != model->getBackground()->constEnd()) {
+        painter.drawImage(b.value()->getRect(),b.value()->getImage());
+        ++b;
+    }
+
     painter.drawImage(model->getMario()->getRect(), model->getMario()->getImage());
 
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
     QMap< int,Safe *>::const_iterator e = model->getSafes()->constBegin();
+
 
     while (i != model->getFloors()->constEnd()) {
         painter.drawImage(i.value()->getRect(),i.value()->getImage());
@@ -41,10 +49,24 @@ void GameBoard::paintEvent(QPaintEvent *event)
         painter.drawImage(e.value()->getRect(),e.value()->getImage());
         ++e;
     }
+
+
+    //painter.fillRect(model->getHeader()->getRect(), model->getHeader()->getColor());
+
+    painter.drawImage(model->getHeader()->getRect().width() - 200, model->getHeader()->getRect().height() / 8, model->getHeader()->getGold());
+    painter.drawText(model->getHeader()->getRect().center(), "x10");
+
+    for(int i = 0 ; i < model->getMario()->getLife() ; i++)
+        painter.drawImage(model->getHeader()->getHeart().size().height() * i, 0, model->getHeader()->getHeart());
+
+    if(isSplashScreen)
+        painter.drawImage(model->getSplashScreen()->getRect(), model->getSplashScreen()->getImage());
+
 }
 
 void GameBoard::timerEvent(QTimerEvent *event)
 {
+    splashScreen();
     movementMario();
     removeDestroyed();
     repaint();
@@ -53,11 +75,11 @@ void GameBoard::timerEvent(QTimerEvent *event)
 
 void GameBoard::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Right && !moveL)
+    if(event->key() == Qt::Key_Right)
     {
         moveR=true;
     }
-    else if(event->key() == Qt::Key_Left && !moveR)
+    else if(event->key() == Qt::Key_Left)
     {
         moveL=true;
     }
@@ -113,7 +135,37 @@ void GameBoard::removeDestroyed()
             k.remove();
         }
     }
+    QMutableMapIterator<int ,Background * > b(*model->getBackground());
+    while (b.hasNext()) {
+        b.next();
+        if (b.value()->isDestroyed() ){
+            qDebug() << "Remove Background:" << b.key() ;
+            b.remove();
+        }
+    }
 }
+
+/*void GameBoard::movementBackground(){
+    QPixmap bkgnd(":/images/background.png");
+    QImage back = bkgnd.toImage();
+
+    back.scaled(this->size(), Qt::IgnoreAspectRatio);
+    if(back.size().width())
+   //back.transformed()
+    if(moveCount > 700/2){
+        QPixmap bkgnd2(":/images/background.png");
+        QImage back = bkgnd2.toImage();
+        back = back.copy(moveCount/2, 0, 700, 700);
+    }
+    else{
+        back = back.copy(moveCount/2, 0, 700, 700);
+    }
+
+    QPalette palette;
+    palette.setBrush(QPalette::Background, back);
+    this->setPalette(palette);
+}*/
+
 
 void GameBoard::movementMario()
 {
@@ -121,7 +173,7 @@ void GameBoard::movementMario()
     int x=model->getMario()->getRect().x();
     //Count type=move;
     //QList<QString> valuesList = model->getCount().values();
-    if(isJumping )
+    if(isJumping)
     {
         xRelatif+=2;
         yRelatif=(-0.02*(xRelatif*xRelatif)+200);
@@ -135,8 +187,10 @@ void GameBoard::movementMario()
         }
         else if(moveR && model->getMario()->getRect().x()>=240){
             movementMap();
+            //movementBackground();
             moveCount++;
         }
+
         model->getMario()->move(x,y);
 
     }
@@ -156,10 +210,26 @@ void GameBoard::movementMario()
         }
         else if(moveR && model->getMario()->getRect().x()>=240){
             movementMap();
+            //movementBackground();
             moveCount++;
 
         }
         model->getMario()->move(x, y);
+    }
+    if(!intersect() && !isJumping){
+        y = y + 2;
+        if(moveL && model->getMario()->getRect().x()>=2){
+            x-=2;
+        moveCount--;        }
+        else if(moveR && model->getMario()->getRect().x()<=240){
+            x+=2;
+            moveCount++;
+        }
+        else if(moveR && model->getMario()->getRect().x()>=240){
+            movementMap();
+            moveCount++;
+        }
+        model->getMario()->move(x,y);
     }
 }
 
@@ -173,6 +243,13 @@ void GameBoard::movementMap()
         x0=i.value()->getRect().x();
         i.value()->moveBrick(x0-2);
         ++i;
+    }
+
+    QMap< int,Background *>::const_iterator k = model->getBackground()->constBegin();
+    while (k != model->getBackground()->constEnd()) {
+        x0=k.value()->getRect().x();
+        k.value()->moveBrick(x0-1);
+        ++k;
     }
 
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
@@ -195,6 +272,18 @@ void GameBoard::movementMap()
 
         }
         ++i0;
+    }
+
+    QMap< int,Background *>::const_iterator b0= model->getBackground()->constBegin();
+    while (b0 != model->getBackground()->constEnd()) {
+        if(b0.value()->getRect().x() < - b0.value()->getRect().width() + 2){
+            b0.value()->setDestroyed(true);
+            Background* b = new Background(b0.value()->getRect().width(),0);
+            model->getBackground()->insert(model->getBackgroundCount(), b);
+            qDebug() << "create Background:" << model->getBackgroundCount() ;
+            model->setBackgroundCount();
+        }
+        ++b0;
     }
 
     if(moveCount==200){
@@ -227,4 +316,14 @@ bool GameBoard::intersect()
         ++i;
     }
     return false;
+}
+
+void GameBoard::splashScreen(){
+    int x=model->getSplashScreen()->getRect().x();
+    int y=model->getSplashScreen()->getRect().y();
+    y--;
+    if(model->getSplashScreen()->getRect().bottom() > 0 && isSplashScreen)
+        model->getSplashScreen()->move(x, y);
+    else
+        isSplashScreen = false;
 }

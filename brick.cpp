@@ -1,5 +1,6 @@
 #include "brick.h"
 #include <iostream>
+#include <QDebug>
 
 Brick::Brick(int x, int y, QString picture)
 {
@@ -44,3 +45,7 @@ void Brick::moveBrick(int x)
     rect.moveTo(x, rect.top());
 }
 
+void Brick::move(int x ,int y)
+{
+    rect.moveTo(x, y);
+}

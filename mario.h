@@ -9,6 +9,8 @@ public:
 
     Mario(int, int);
     ~Mario();
+
+
 };
 
 #endif // MARIO_H

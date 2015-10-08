@@ -1,15 +1,13 @@
 #ifndef SPLASHSCREEN_H
 #define SPLASHSCREEN_H
 
-
-class SplashScreen
+#include "brick.h"
+class SplashScreen : public Brick
 {
 public:
-    SplashScreen();
+    SplashScreen(int, int);
+    ~SplashScreen();
 
-signals:
-
-public slots:
 };
 
 #endif // SPLASHSCREEN_H
