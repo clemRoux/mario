@@ -28,8 +28,7 @@ void center(QWidget &widget)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    Model model;
-    GameBoard window(&model, NULL);
+    GameBoard window( NULL);
     window.setWindowTitle("Mario Game");
     window.show();
     center(window);

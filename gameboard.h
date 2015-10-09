@@ -10,7 +10,6 @@
 #include "mario.h"
 
 class Model;
-class View;
 
 class GameBoard : public QWidget
 {
@@ -18,7 +17,7 @@ class GameBoard : public QWidget
 
 
 public:
-    GameBoard(Model *model, QWidget *parent = 0);
+    GameBoard(QWidget *parent = 0);
     ~GameBoard();
 
   protected:
@@ -27,27 +26,24 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void stopGame();
-    void removeDestroyed();
     void movementMario();
     void movementMap();
-    bool intersect();
-
+    bool intersectBottomMario();
+    bool intersectTopMario();
+    bool intersectRightMario();
+    bool intersectLeftMario();
 
 private:
     Model *model;
     int timerId;
     bool gameStarted;
-
-  private:
-
     int xRelatif;
     int yRelatif;
-    int safeCount;
-    int moveCount;
-    int floorCount;
+    int startJumpY;
     bool moveR;
     bool moveL;
     bool isJumping;
+
 
 };
 #endif // GAMEBOARD_H

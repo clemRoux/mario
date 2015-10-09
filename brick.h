@@ -10,6 +10,7 @@ class Brick
 
   public:
 
+    Brick(int ,int );
     Brick(int, int , QString );
     ~Brick();
     bool isDestroyed();
@@ -17,8 +18,7 @@ class Brick
     QRect getRect();
     void setRect(QRect);
     QImage & getImage();
-    void moveLeft(int );
-    void moveBrick(int );
+    void moveBrick();
 
   private:
 

@@ -8,5 +8,6 @@
         <file>images/walkMario4.png</file>
         <file>images/walkMario5.png</file>
         <file>images/walkMario6.png</file>
+        <file>ModelMap.txt</file>
     </qresource>
 </RCC>
