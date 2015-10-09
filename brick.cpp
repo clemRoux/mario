@@ -2,6 +2,11 @@
 #include <iostream>
 #include <QDebug>
 
+Brick::Brick(int x,int y){
+    destroyed = false;
+    rect.translate(x, y);
+}
+
 Brick::Brick(int x, int y, QString picture)
 {
     image.load(picture);
@@ -40,9 +45,9 @@ void Brick::setDestroyed(bool destr)
     destroyed = destr;
 }
 
-void Brick::moveBrick(int x)
+void Brick::moveBrick()
 {
-    rect.moveTo(x, rect.top());
+    rect.moveTo(rect.left()-4, rect.top());
 }
 
 void Brick::move(int x ,int y)

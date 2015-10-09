@@ -10,6 +10,7 @@ class Brick
 
   public:
 
+    Brick(int ,int );
     Brick(int, int , QString );
     ~Brick();
     bool isDestroyed();
@@ -19,6 +20,7 @@ class Brick
     QImage & getImage();
     void move(int ,int );
     void moveBrick(int );
+    void moveBrick();
 
   private:
 

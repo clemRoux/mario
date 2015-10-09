@@ -30,5 +30,7 @@
         <file>images/fire.png</file>
         <file>images/fire_ball.png</file>
         <file>images/mysticTree.png</file>
+        <file>ModelMap.txt</file>
+
     </qresource>
 </RCC>

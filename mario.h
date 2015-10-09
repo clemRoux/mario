@@ -1,6 +1,7 @@
 #ifndef MARIO_H
 #define MARIO_H
 
+#include <QDebug>
 #include "person.h"
 
 class Mario : public Person

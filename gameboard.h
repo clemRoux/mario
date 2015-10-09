@@ -10,7 +10,6 @@
 #include "mario.h"
 
 class Model;
-class View;
 
 class GameBoard : public QWidget
 {
@@ -18,7 +17,7 @@ class GameBoard : public QWidget
 
 
 public:
-    GameBoard(Model *model, QWidget *parent = 0);
+    GameBoard(QWidget *parent = 0);
     ~GameBoard();
     inline int getIterBackground(){ return this->iterBackground; }
     inline void setIterBackground(int iterBackground){ this->iterBackground = iterBackground; }
@@ -29,25 +28,23 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void stopGame();
-    void removeDestroyed();
     void movementMario();
     void movementMap();
     void movementBackground();
-    bool intersect();
     void splashScreen();
     void hurted();
-
+    bool intersectBottomMario();
+    bool intersectTopMario();
+    bool intersectRightMario();
+    bool intersectLeftMario();
 
 private:
     Model *model;
     int timerId;
     bool gameStarted;
-
     int xRelatif;
     int yRelatif;
-    int safeCount;
-    int moveCount;
-    int floorCount;
+    int startJumpY;
     bool moveR;
     bool moveL;
     bool isJumping;
@@ -55,9 +52,9 @@ private:
     int iterBackground;
     float currentFrame = 1;
     int tempMove = 0;
-    char* lastMove = "R";
     qreal opacity = 1;
     bool isHurted = false;
+
 
 };
 #endif // GAMEBOARD_H
