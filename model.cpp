@@ -10,7 +10,8 @@ Model::Model()
 {
     this->floors = new QMap<int,Floor *>;
     this->safes = new QMap<int,Safe *>;
-    this->mario = new Mario(100,142);
+    this->mario = new Mario(100,144);
+    this->mushroom = new QMap<int,Mushroom *>;
     this->splashScreen = new SplashScreen(100, 100);
     this->background = new QMap<int,Background *>;
     this->header = new Header();

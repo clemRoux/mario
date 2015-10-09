@@ -10,6 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MarioProject
 TEMPLATE = app
+QMAKE_CXXFLAGS+= -std=c++11
+QMAKE_LFLAGS +=  -std=c++11
 
 RESOURCES += mario.qrc
 
@@ -24,7 +26,8 @@ SOURCES += main.cpp \
     model.cpp \
     splashscreen.cpp \
     header.cpp \
-    background.cpp
+    background.cpp \
+    mushroom.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -35,6 +38,7 @@ HEADERS  += gameboard.h \
     model.h \
     splashscreen.h \
     header.h \
-    background.h
+    background.h \
+    mushroom.h
 
 DISTFILES +=

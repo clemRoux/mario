@@ -19,5 +19,16 @@
         <file>images/mario_graphics1.png</file>
         <file>images/mario_sprites.png</file>
         <file>images/mario_walk_sprites.png</file>
+        <file>images/mario_walk_sprites_left.png</file>
+        <file>images/mario_stop.png</file>
+        <file>images/safegold.png</file>
+        <file>images/champ.png</file>
+        <file>images/champ_gris.png</file>
+        <file>images/brick.png</file>
+        <file>images/dark_eater.png</file>
+        <file>images/fantom_sprite.png</file>
+        <file>images/fire.png</file>
+        <file>images/fire_ball.png</file>
+        <file>images/mysticTree.png</file>
     </qresource>
 </RCC>

@@ -35,6 +35,7 @@ public:
     void movementBackground();
     bool intersect();
     void splashScreen();
+    void hurted();
 
 
 private:
@@ -52,7 +53,11 @@ private:
     bool isJumping;
     bool isSplashScreen;
     int iterBackground;
-    float currentFrame = 2;
+    float currentFrame = 1;
     int tempMove = 0;
+    char* lastMove = "R";
+    qreal opacity = 1;
+    bool isHurted = false;
+
 };
 #endif // GAMEBOARD_H
