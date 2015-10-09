@@ -92,11 +92,6 @@ void GameBoard::paintEvent(QPaintEvent *event)
         qDebug() << "HURT!!";
         painter.drawPixmap(model->getMario()->getDieRect(), model->getMario()->getStopSprite(), QRect(0, 1, 57, 68));
     }
-    else{
-        opacity = 1;
-        painter.setOpacity(opacity);
-    }
-
 }
 
 void GameBoard::timerEvent(QTimerEvent *event)
@@ -282,7 +277,7 @@ void GameBoard::movementMap()
     if(getIterBackground() == 4){
         while (k != model->getBackground()->constEnd()) {
             x0=k.value()->getRect().x();
-            k.value()->moveBrick(x0-1);
+            k.value()->moveBrick(x0-2);
             ++k;
         }
         setIterBackground(0);
