@@ -1,5 +1,6 @@
 #include "model.h"
 #include "brick.h"
+#include "gold.h"
 #include <mario.h>
 #include <safe.h>
 #include <floor.h>
@@ -26,14 +27,13 @@ Model::Model()
     this->floors = new QMap<int,Floor *>;
     this->safes = new QMap<int,Safe *>;
     this->mushroom = new QMap<int,Mushroom *>;
-    this->splashScreen = new SplashScreen(100, 100);
+    this->golds = new QMap<int,Gold *>;
+    this->splashScreen = new SplashScreen(200, 100);
     this->background = new QMap<int,Background *>;
     this->header = new Header();
     this->compteur = new QMap<int, Brick*> ;
     this->mario = new Mario(200,340);
-    floorCount=0;
-    safeCount=0;
-    mapPosition=0;
+
     QFile fichier(":ModelMap.txt");
 
     if(fichier.open(QIODevice::ReadOnly))
@@ -101,6 +101,7 @@ Model::Model()
     for (int i=0; i<2; i++) {
         Background* b = new Background(i*800, 0);
         background->insert(backgroundCount, b);
+        qDebug() << "create Background:" << backgroundCount;
         backgroundCount++;
     }
 }
@@ -112,12 +113,14 @@ Model::~Model()
     QMap< int,Floor *>::const_iterator i = floors->constBegin();
     QMap< int,Safe *>::const_iterator e = safes->constBegin();
     QMap< int,Brick *>::const_iterator c = compteur->constBegin();
+    QMap<int,Background *>::const_iterator b= background ->constBegin();
+    QMap<int, Mushroom *>::const_iterator m= mushroom ->constBegin();
+    QMap<int, Gold*>::const_iterator g= golds ->constBegin();
 
     while (c != compteur->constEnd()) {
         delete c.value();
         ++c;
     }
-
     while (i != floors->constEnd()) {
         delete i.value();
         ++i;
@@ -126,12 +129,30 @@ Model::~Model()
         delete  e.value();
         ++e;
     }
+    while (b != background->constEnd()) {
+        delete  b.value();
+        ++b;
+    }
+    while (m!= mushroom->constEnd()) {
+        delete  m.value();
+        ++m;
+    }
+    while (g!= golds->constEnd()) {
+        delete  g.value();
+        ++g;
+    }
     floors->clear();
     delete floors;
     safes->clear();
     delete safes;
     compteur->clear();
     delete compteur;
+    background->clear();
+    delete background;
+    mushroom->clear();
+    delete mushroom;
+    golds->clear();
+    delete golds;
     delete mario;
     delete splashScreen;
 }
@@ -155,6 +176,12 @@ void Model::createBrick(QList<int> l ,int num )
         safeCount++;
         break;
     }
+    case 3:{
+        Gold* g= new Gold(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        golds->insert(goldCount,g);
+        goldCount++;
+        break;
+    }
     }
 }
 
@@ -162,27 +189,28 @@ void Model::createBrick(QList<int> l ,int num )
 
 void Model::brickOrganisation()
 {
-    QMap< int,Background *>::const_iterator b0= getBackground()->constBegin();
-    while (b0 != getBackground()->constEnd()) {
-        if(b0.value()->getRect().x() < - b0.value()->getRect().width() + 2){
-            b0.value()->setDestroyed(true);
-            Background* b = new Background(b0.value()->getRect().width(),0);
-            getBackground()->insert(getBackgroundCount(), b);
-            qDebug() << "create Background:" << getBackgroundCount() ;
-            setBackgroundCount();
-        }
-        ++b0;
-    }
-
+    QMutableMapIterator<int ,Background * > b0(*this->getBackground());
     QMutableMapIterator<int ,Brick * > c(*this->getCompteur());
     QMutableMapIterator<int ,Floor * > i(*this->getFloors());
     QMutableMapIterator<int ,Safe * > j(*this->getSafes());
+    QMutableMapIterator<int ,Gold * > g(*this->getGold());
+
+    while (b0.hasNext()) {
+        b0.next();
+        if(b0.value()->getRect().x() < - b0.value()->getRect().width() + 2){
+            b0.remove();
+            Background* b = new Background(800,0);
+            background->insert( backgroundCount, b);
+            qDebug() << "create Background:" << backgroundCount;
+            backgroundCount++;
+        }
+    }
     while(c.hasNext()){
         c.next();
         if (c.value()->getRect().x()<=-brickSize){
             qDebug() << "Remove Compteur" << c.key() ;
+            Brick *b=new Brick(c.value()->getRect().x()+(NbrBrickVisible)*brickSize,Hauteur+brickSize);
             c.remove();
-            Brick *b=new Brick(NbrBrickVisible*brickSize,Hauteur+brickSize);
             compteur->insert(mapPosition,b);
             createBrick(ligne1,1);
             createBrick(ligne2,2);
@@ -196,7 +224,6 @@ void Model::brickOrganisation()
     while(i.hasNext()){
         i.next();
         if (i.value()->getRect().x()<=-brickSize || i.value()->isDestroyed()){
-            qDebug() << "Remove Floor:" << i.key() ;
             i.remove();
         }
     }
@@ -204,8 +231,15 @@ void Model::brickOrganisation()
     while(j.hasNext()){
         j.next();
         if (j.value()->getRect().x()<=-brickSize || j.value()->isDestroyed()){
-            qDebug() << "Remove Safe:" << j.key() ;
             j.remove();
+        }
+    }
+
+    while(g.hasNext()){
+        g.next();
+        if (g.value()->getRect().x()<=-brickSize || g.value()->isDestroyed()){
+            qDebug() << "Remove gggggggggggold"  ;
+            g.remove();
         }
     }
 }

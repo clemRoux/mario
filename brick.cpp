@@ -5,6 +5,7 @@
 Brick::Brick(int x,int y){
     destroyed = false;
     rect.translate(x, y);
+    rect.setSize(QSize(50,50));
 }
 
 Brick::Brick(int x, int y, QString picture)
@@ -47,7 +48,7 @@ void Brick::setDestroyed(bool destr)
 
 void Brick::moveBrick()
 {
-    rect.moveTo(rect.left()-4, rect.top());
+    rect.moveTo(rect.left()-2, rect.top());
 }
 
 void Brick::move(int x ,int y)

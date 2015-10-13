@@ -19,7 +19,6 @@ class Brick
     void setRect(QRect);
     QImage & getImage();
     void move(int ,int );
-    void moveBrick(int );
     void moveBrick();
 
   private:

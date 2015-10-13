@@ -15,9 +15,8 @@
 class Safe;
 class Floor;
 class Mario;
-
-//inline enum Count { MOVE, SAFE, FLOOR };
 class Brick;
+class Gold;
 
 class Model
 {
@@ -26,24 +25,21 @@ public:
     ~Model();
     void createBrick(QList<int> , int );
     void brickOrganisation();
-    QMap<int, Brick*> *getCompteur(){ return compteur; }
     inline Mario *getMario(){ return mario; }
     SplashScreen *getSplashScreen(){ return splashScreen; }
     Header *getHeader(){ return header; }
+    QMap<int, Brick*> *getCompteur(){ return compteur; }
     inline QMap<int, Safe*> *getSafes(){ return safes; }
     inline QMap<int, Floor*> *getFloors(){ return floors; }
     inline QMap<int, Background*> *getBackground(){ return background; }
     inline QMap<int, Mushroom*> *getMushroom(){ return mushroom; }
+    inline QMap<int, Gold*> *getGold(){ return golds; }
     inline int getBackgroundCount(){ return backgroundCount; }
-    inline void setBackgroundCount(){ this->backgroundCount++; }
     inline int getMushroomCount(){ return mushroomCount; }
-    inline void setMushroomCount(){ this->mushroomCount++; }
-    inline void setSafes(QMap<int,Safe*> *safes){ this->safes = safes; }
-    inline void setFloors(QMap<int,Floor*> *floors){ this->floors = floors; }
     static int const brickSize = 50;
     static int const Hauteur =500;
-    static int const Longueur =600;
-    static int const NbrBrickVisible = 12;
+    static int const Longueur =800;
+    static int const NbrBrickVisible = 17;
 
 private:
     QMap<int, Safe*> *safes;
@@ -51,6 +47,7 @@ private:
     QMap<int, Floor*> *floors;
     QMap<int, Brick*> *compteur;
     QMap<int, Background*> *background;
+    QMap<int, Gold*> *golds;
     QList<int> ligne1;
     QList<int> ligne2;
     QList<int> ligne3;
@@ -59,11 +56,12 @@ private:
     Mario *mario;
     SplashScreen *splashScreen;
     Header *header;
-    int floorCount;
-    int safeCount;
-    int backgroundCount;
-    int mushroomCount;
-    int mapPosition;
+    int floorCount=0;
+    int safeCount=0;
+    int backgroundCount=0;
+    int mushroomCount=0;
+    int mapPosition=0;
+    int goldCount=0;
 };
 
 #endif // MODEL_H

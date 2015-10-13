@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     splashscreen.cpp \
     header.cpp \
     background.cpp \
-    mushroom.cpp
+    mushroom.cpp \
+    gold.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -39,6 +40,7 @@ HEADERS  += gameboard.h \
     splashscreen.h \
     header.h \
     background.h \
-    mushroom.h
+    mushroom.h \
+    gold.h
 
 DISTFILES +=

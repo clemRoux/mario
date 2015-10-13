@@ -16,8 +16,8 @@ GameBoard::GameBoard(QWidget *parent)
     isJumping=false;
     xRelatif = -100;
     yRelatif = 0;
-    isSplashScreen = true;
-    setIterBackground(0);
+    isSplashScreen = false;
+    iterBackground=0;
 }
 
 //-------------------------------------------------------------------------------------------------------------//
@@ -32,19 +32,16 @@ GameBoard::~GameBoard()
 void GameBoard::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-
     QMap< int,Background *>::const_iterator b = model->getBackground()->constBegin();
+    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
+    QMap< int,Safe *>::const_iterator e = model->getSafes()->constBegin();
+    QMap< int,Mushroom *>::const_iterator m = model->getMushroom()->constBegin();
+    QMap< int,Gold *>::const_iterator g = model->getGold()->constBegin();
+
     while (b != model->getBackground()->constEnd()) {
         painter.drawImage(b.value()->getRect(),b.value()->getImage());
         ++b;
     }
-
-
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    QMap< int,Safe *>::const_iterator e = model->getSafes()->constBegin();
-    QMap< int,Mushroom *>::const_iterator m = model->getMushroom()->constBegin();
-
-
     while (i != model->getFloors()->constEnd()) {
         painter.drawImage(i.value()->getRect(),i.value()->getImage());
         ++i;
@@ -57,9 +54,12 @@ void GameBoard::paintEvent(QPaintEvent *event)
         painter.drawImage(m.value()->getRect(),m.value()->getImage());
         ++m;
     }
+    while (g != model->getGold()->constEnd()) {
+        painter.drawImage(g.value()->getRect(),g.value()->getImage());
+        ++g;
+    }
 
-
-    QRect sourceRect = QRect(currentFrame, 1, 57, 68);
+    QRect sourceRect = QRect(currentFrame+6, 1, model->getMario()->getRect().width(), model->getMario()->getRect().height()+3);
     if(moveR){
         painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getMoveRSprite(), sourceRect);
     }
@@ -67,10 +67,9 @@ void GameBoard::paintEvent(QPaintEvent *event)
         painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getMoveLSprite(), sourceRect);
     }
     else
-        painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getStopSprite(), sourceRect);
+        painter.drawPixmap(model->getMario()->getRect() ,model->getMario()->getStopSprite(), sourceRect);
 
-
-    painter.drawImage(model->getHeader()->getRect().width() - 200, model->getHeader()->getRect().height() / 8, model->getHeader()->getGold());
+    painter.drawImage(model->getHeader()->getRect().width() - 100, model->getHeader()->getRect().height() / 8, model->getHeader()->getGold());
     painter.setFont(QFont("Tahoma", 12, -1, false));
     QString goldText = "x" + QString::number(model->getMario()->getGoldNumber());
     painter.drawText(model->getHeader()->getGoldPosition(), goldText);
@@ -87,7 +86,6 @@ void GameBoard::paintEvent(QPaintEvent *event)
         opacity = 1;
         painter.setOpacity(opacity);
     }
-
     if(isHurted){
         opacity = opacity - 0.01;
         painter.setOpacity(opacity);
@@ -100,9 +98,9 @@ void GameBoard::paintEvent(QPaintEvent *event)
 
 void GameBoard::timerEvent(QTimerEvent *event)
 {
-    splashScreen();
+    //splashScreen();
     movementMario();
-    hurted();
+    //hurted();
     model->brickOrganisation();
     repaint();
 }
@@ -112,17 +110,10 @@ void GameBoard::timerEvent(QTimerEvent *event)
 void GameBoard::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Right)
-    {
         moveR=true;
-
-    }
     else if(event->key() == Qt::Key_Left)
-    {
         moveL=true;
-
-    }
-    else if(event->key() == Qt::Key_Space && intersectBottomMario())
-    {
+    else if(event->key() == Qt::Key_Space && intersectBottomMario()){
         isJumping=true;
         startJumpY=model->getMario()->getRect().y();
     }
@@ -140,14 +131,9 @@ void GameBoard::keyPressEvent(QKeyEvent *event)
 void GameBoard::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Right )
-    {
         moveR=false;
-
-    }
     else if(event->key() == Qt::Key_Left )
-    {
         moveL=false;
-    }
     else
         event->ignore();
 }
@@ -160,72 +146,23 @@ void GameBoard::stopGame()
     gameStarted = false;
 }
 
-/*
-void GameBoard::removeDestroyed()
-{
-    QMutableMapIterator<int ,Floor * > i(*model->getFloors());
-    while (i.hasNext()) {
-        i.next();
-        if (i.value()->isDestroyed() ){
-            qDebug() << "Remove Floor:" << i.key() ;
-            i.remove();
-        }
-    }
-    QMutableMapIterator<int ,Safe * > k(*model->getSafes());
-    while (k.hasNext()) {
-        k.next();
-        if (k.value()->isDestroyed() ){
-            qDebug() << "Remove Safe:" << k.key() ;
-            k.remove();
-        }
-    }
-    QMutableMapIterator<int ,Background * > b(*model->getBackground());
-    while (b.hasNext()) {
-        b.next();
-        if (b.value()->isDestroyed() ){
-            qDebug() << "Remove Background:" << b.key() ;
-            b.remove();
-        }
-    }
-}*/
 //----------------------------------------------------------------------------------------------------------------//
 
 void GameBoard::movementMario()
 {
     int y=model->getMario()->getRect().y();
-    int x=model->getMario()->getRect().x();
-
-    if(isJumping && !intersectTopMario())
-    {
-
-        xRelatif+=4;
+    if(isJumping && !intersectTopMario()){
+        xRelatif+=3;
         yRelatif=(-0.02*(xRelatif*xRelatif)+200);
         y = startJumpY-yRelatif;
-
-        if(moveL && model->getMario()->getRect().x()>=2 && !intersectLeftMario())
-            x-=4;
-        else if(moveR && model->getMario()->getRect().x()<=240 && !intersectRightMario())
-            x+=4;
-        else if(moveR && model->getMario()->getRect().x()>=240 && !intersectRightMario())
-            movementMap();
-        model->getMario()->move(x,y);
+        moveXMario(y);
+        currentFrame = 0;
     }
-
-    if(intersectBottomMario() || intersectTopMario())
-    {
+    if(intersectBottomMario() || intersectTopMario()){
         xRelatif=-100;
         yRelatif=0;
         isJumping=false;
-
-        if(moveL && model->getMario()->getRect().x()>=2 && !intersectLeftMario())
-            x-=4;
-        else if(moveR && model->getMario()->getRect().x()<=240 && !intersectRightMario())
-            x+=4;
-        else if(moveR && model->getMario()->getRect().x()>=240 && !intersectRightMario())
-            movementMap();
-
-        model->getMario()->move(x, y);
-
+        moveXMario(y);
         if(moveR && tempMove == 1){
             currentFrame += 57;
             if (currentFrame >= 1180 )
@@ -237,28 +174,34 @@ void GameBoard::movementMario()
         else if(moveL && tempMove == 1){
             currentFrame -= 57;
             if (currentFrame <= 0 )
-                currentFrame = 1187;
+                currentFrame = 1191;
             tempMove = 0;
         }
         else if(moveL)
             tempMove++;
         else
             currentFrame = 0;
-
-
     }
-
     if((!intersectBottomMario() && !isJumping )){
-        y+=4;
-        if(moveL && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
-            x-=4;
-        else if(moveR && model->getMario()->getRect().x()<=240  && !intersectRightMario())
-            x+=4;
-        else if(moveR && model->getMario()->getRect().x()>=240  && !intersectRightMario())
-            movementMap();
-
-        model->getMario()->move(x,y);
+        y += 3;
+        moveXMario(y);
+        currentFrame = 0;
     }
+    intersectGoldMario();
+}
+
+//----------------------------------------------------------------------------------------------------------------//
+
+void GameBoard::moveXMario(int y)
+{
+    int x=model->getMario()->getRect().x();
+    if(moveL && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
+        x-=2;
+    else if(moveR && model->getMario()->getRect().x()<=350  && !intersectRightMario())
+        x+=2;
+    else if(moveR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
+        movementMap();
+    model->getMario()->move(x,y);
 }
 
 //----------------------------------------------------------------------------------------------------------------//
@@ -270,23 +213,21 @@ void GameBoard::movementMap()
         i.value()->moveBrick();
         ++i;
     }
-
     QMap< int,Background *>::const_iterator k = model->getBackground()->constBegin();
-    if(getIterBackground() == 4){
+    if(iterBackground== 4){
         while (k != model->getBackground()->constEnd()) {
             k.value()->moveBrick();
             ++k;
         }
-        setIterBackground(0);
+        iterBackground=0;
     }
     else{
         while (k != model->getBackground()->constEnd()) {
             k.value()->move(k.value()->getRect().x(), k.value()->getRect().y());
             ++k;
         }
-        setIterBackground(getIterBackground() + 1);
+        iterBackground++;
     }
-
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
     while (j != model->getSafes()->constEnd()) {
         j.value()->moveBrick();
@@ -297,63 +238,51 @@ void GameBoard::movementMap()
         m.value()->moveBrick();
         ++m;
     }
-
     QMap< int,Brick *>::const_iterator s = model->getCompteur()->constBegin();
     while (s!= model->getCompteur()->constEnd()) {
         s.value()->moveBrick();
         ++s;
     }
+    QMap< int,Gold *>::const_iterator g = model->getGold()->constBegin();
+    while (g!= model->getGold()->constEnd()) {
+        g.value()->moveBrick();
+        ++g;
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------//
-
 
 bool GameBoard::intersectTopMario()
 {
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
     while (i != model->getFloors()->constEnd()) {
-        if(i.value()->getRect().intersected(model->getMario()->getRect()).width() > 1 ){
-            if(model->getMario()->getRect().y() > i.value()->getRect().y())
-                return true;
-        }
+        if(model->getMario()->intersectTop(i.value()->getRect()))
+            return true;
         ++i;
     }
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
     while (j != model->getSafes()->constEnd()) {
-        if(j.value()->getRect().intersected(model->getMario()->getRect()).width() > 1 ){
-            if(model->getMario()->getRect().y() > j.value()->getRect().y()){
-                model->getMario()->move(model->getMario()->getRect().x(),j.value()->getRect().y()+49);
-                j.value()->setDestroyed(true);
-                return true;
-            }
-
+        if(model->getMario()->intersectTop(j.value()->getRect())){
+            j.value()->setDestroyed(true);
+            return true;
         }
         ++j;
     }
     return false;
 }
 
-
 bool GameBoard::intersectBottomMario()
 {
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()) {
-        if(i.value()->getRect().intersected(model->getMario()->getRect()).width() > 1 ){
-            if(model->getMario()->getRect().y() < i.value()->getRect().y()){
-                model->getMario()->move(model->getMario()->getRect().x(),i.value()->getRect().y()-59);
-                return true;
-            }
-        }
+    while (i != model->getFloors()->constEnd()){
+        if(model->getMario()->intersectBottom(i.value()->getRect()))
+            return true;
         ++i;
     }
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
     while (j != model->getSafes()->constEnd()) {
-        if(j.value()->getRect().intersected(model->getMario()->getRect()).width() > 1 ){
-            if(model->getMario()->getRect().y() < j.value()->getRect().y()){
-                model->getMario()->move(model->getMario()->getRect().x(),j.value()->getRect().y()-59);
-                return true;
-            }
-        }
+        if(model->getMario()->intersectBottom(j.value()->getRect()))
+            return true;
         ++j;
     }
     return false;
@@ -363,18 +292,14 @@ bool GameBoard::intersectLeftMario()
 {
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
     while (i != model->getFloors()->constEnd()) {
-        if(i.value()->getRect().intersected(model->getMario()->getRect()).height() > 2 ){
-            if(model->getMario()->getRect().x() > i.value()->getRect().x())
-                return true;
-        }
+        if(model->getMario()->intersectLeft(i.value()->getRect()))
+            return true;
         ++i;
     }
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
     while (j != model->getSafes()->constEnd()) {
-        if(j.value()->getRect().intersected(model->getMario()->getRect()).height() > 2 ){
-            if(model->getMario()->getRect().x() > j.value()->getRect().x())
-                return true;
-        }
+        if(model->getMario()->intersectLeft(j.value()->getRect()))
+            return true;
         ++j;
     }
     return false;
@@ -384,22 +309,31 @@ bool GameBoard::intersectRightMario()
 {
     QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
     while (i != model->getFloors()->constEnd()) {
-        if(i.value()->getRect().intersected(model->getMario()->getRect()).height() > 2 ){
-            if(model->getMario()->getRect().x() < i.value()->getRect().x())
-                return true;
-        }
+        if(model->getMario()->intersectRight(i.value()->getRect()))
+            return true;
         ++i;
     }
     QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
     while (j != model->getSafes()->constEnd()) {
-        if(j.value()->getRect().intersected(model->getMario()->getRect()).height() > 2 ){
-            if(model->getMario()->getRect().x() < j.value()->getRect().x())
-                return true;
-        }
+        if(model->getMario()->intersectRight(j.value()->getRect()))
+            return true;
         ++j;
     }
     return false;
 }
+
+void GameBoard::intersectGoldMario()
+{
+    QMap< int,Gold *>::const_iterator j = model->getGold()->constBegin();
+    while (j != model->getGold()->constEnd()) {
+        if(model->getMario()->intersect(j.value()->getRect())){
+            j.value()->setDestroyed(true);
+            model->getMario()->setGoldNumber(model->getMario()->getGoldNumber()+1);}
+        ++j;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------//
 
 void GameBoard::splashScreen(){
     int x=model->getSplashScreen()->getRect().x();
@@ -411,6 +345,7 @@ void GameBoard::splashScreen(){
         isSplashScreen = false;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------//
 
 void GameBoard::hurted(){
     if(isHurted){

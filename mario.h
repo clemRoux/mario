@@ -12,6 +12,10 @@ public:
     ~Mario();
     int getGoldNumber(){ return goldNumber; }
     void setGoldNumber(int goldNumber){ this->goldNumber = goldNumber; }
+    bool intersectTop(QRect );
+    bool intersectBottom(QRect );
+    bool intersectRight(QRect );
+    bool intersectLeft(QRect );
 
 private:
     int goldNumber;

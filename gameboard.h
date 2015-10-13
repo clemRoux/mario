@@ -8,6 +8,7 @@
 #include "safe.h"
 #include "floor.h"
 #include "mario.h"
+#include "gold.h"
 
 class Model;
 
@@ -19,8 +20,6 @@ class GameBoard : public QWidget
 public:
     GameBoard(QWidget *parent = 0);
     ~GameBoard();
-    inline int getIterBackground(){ return this->iterBackground; }
-    inline void setIterBackground(int iterBackground){ this->iterBackground = iterBackground; }
 
   protected:
     void paintEvent(QPaintEvent *event);
@@ -29,6 +28,7 @@ public:
     void keyReleaseEvent(QKeyEvent *event);
     void stopGame();
     void movementMario();
+    void moveXMario(int );
     void movementMap();
     void movementBackground();
     void splashScreen();
@@ -37,6 +37,7 @@ public:
     bool intersectTopMario();
     bool intersectRightMario();
     bool intersectLeftMario();
+    void intersectGoldMario();
 
 private:
     Model *model;
@@ -50,7 +51,7 @@ private:
     bool isJumping;
     bool isSplashScreen;
     int iterBackground;
-    float currentFrame = 1;
+    float currentFrame =1;
     int tempMove = 0;
     qreal opacity = 1;
     bool isHurted = false;

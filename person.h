@@ -18,7 +18,6 @@ class Person
     inline void setRect(QRect rect){ this->rect = rect; }
     inline QRect getDieRect(){ return dieRect; }
     inline void setDieRect(QRect dieRect){ this->dieRect = dieRect; }
-    inline QImage & getImage(){ return image; }
     inline QPixmap getMoveRSprite(){ return moveRSprite; }
     inline QPixmap getMoveLSprite(){ return moveLSprite; }
     inline QPixmap getStopSprite(){ return stopSprite; }
@@ -26,6 +25,7 @@ class Person
     void moveDie(int ,int );
     inline int getLife(){ return life; }
     inline void setLife(int life){ this->life = life; }
+    bool intersect(QRect );
 
 protected:
     QPixmap moveRSprite;
@@ -36,8 +36,6 @@ protected:
     QRect dieRect;
 
    private:
-    QImage image;
-    QPixmap imageMap;
     bool dead;
     int life = 5;
 
