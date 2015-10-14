@@ -21,6 +21,9 @@ class Person
     inline QPixmap getMoveRSprite(){ return moveRSprite; }
     inline QPixmap getMoveLSprite(){ return moveLSprite; }
     inline QPixmap getStopSprite(){ return stopSprite; }
+    inline void setMoveRSprite(QString m){ moveRSprite.load(m); }
+    inline void setMoveLSprite(QString m){ moveLSprite.load(m); }
+    inline void setStopSprite(QString m){ stopSprite.load(m); }
     void move(int , int);
     void moveDie(int ,int );
     inline int getLife(){ return life; }

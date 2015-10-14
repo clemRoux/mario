@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     header.cpp \
     background.cpp \
     mushroom.cpp \
-    gold.cpp
+    gold.cpp \
+    darkeater.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -41,6 +42,7 @@ HEADERS  += gameboard.h \
     header.h \
     background.h \
     mushroom.h \
-    gold.h
+    gold.h \
+    darkeater.h
 
 DISTFILES +=

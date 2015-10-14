@@ -31,6 +31,7 @@ public:
     void moveXMario(int );
     void movementMap();
     void movementBackground();
+    void movementMushroom();
     void splashScreen();
     void hurted();
     bool intersectBottomMario();
@@ -38,6 +39,9 @@ public:
     bool intersectRightMario();
     bool intersectLeftMario();
     void intersectGoldMario();
+    void intersectMushroomMario();
+    void goldAnim();
+    void movementDarkEater();
 
 private:
     Model *model;
@@ -55,6 +59,10 @@ private:
     int tempMove = 0;
     qreal opacity = 1;
     bool isHurted = false;
+    int currentGoldFrame = 0;
+    int temp = 0;
+    int currentDarkEaterFrame = 0;
+    int darkEaterTempo = 0;
 
 
 };

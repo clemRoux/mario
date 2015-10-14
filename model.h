@@ -9,6 +9,7 @@
 #include "header.h"
 #include "background.h"
 #include "mushroom.h"
+#include "darkeater.h"
 #include <QTextStream>
 #include <QList>
 
@@ -34,12 +35,14 @@ public:
     inline QMap<int, Background*> *getBackground(){ return background; }
     inline QMap<int, Mushroom*> *getMushroom(){ return mushroom; }
     inline QMap<int, Gold*> *getGold(){ return golds; }
+    inline DarkEater *getDarkEater(){ return darkEater; }
     inline int getBackgroundCount(){ return backgroundCount; }
     inline int getMushroomCount(){ return mushroomCount; }
+    void createMushroom(int, int);
     static int const brickSize = 50;
     static int const Hauteur =500;
-    static int const Longueur =800;
-    static int const NbrBrickVisible = 17;
+    static int const Longueur =1000;
+    static int const NbrBrickVisible = 20;
 
 private:
     QMap<int, Safe*> *safes;
@@ -48,6 +51,7 @@ private:
     QMap<int, Brick*> *compteur;
     QMap<int, Background*> *background;
     QMap<int, Gold*> *golds;
+    DarkEater *darkEater;
     QList<int> ligne1;
     QList<int> ligne2;
     QList<int> ligne3;

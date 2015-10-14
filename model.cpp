@@ -4,23 +4,10 @@
 #include <mario.h>
 #include <safe.h>
 #include <floor.h>
+#include "darkeater.h"
 #include <splashscreen.h>
 #include <header.h>
 #include <QDebug>
-
-/*
- * if(moveCount==100){
-        isHurted = true;
-        qDebug() << "wtf ??";
-        x0=650;
-        y0=350;
-        Mushroom* m =new Mushroom(x0,y0);
-        model->getMushroom()->insert(model->getMushroomCount(), m);
-        qDebug() << "create Mushroom:" << model->getMushroomCount() ;
-        model->setMushroomCount();
-    }
-*/
-
 
 Model::Model()
 {
@@ -28,7 +15,7 @@ Model::Model()
     this->safes = new QMap<int,Safe *>;
     this->mushroom = new QMap<int,Mushroom *>;
     this->golds = new QMap<int,Gold *>;
-    this->splashScreen = new SplashScreen(200, 100);
+    this->splashScreen = new SplashScreen(300, 100);
     this->background = new QMap<int,Background *>;
     this->header = new Header();
     this->compteur = new QMap<int, Brick*> ;
@@ -99,7 +86,7 @@ Model::Model()
         mapPosition++;
     }
     for (int i=0; i<2; i++) {
-        Background* b = new Background(i*800, 0);
+        Background* b = new Background(i*1000, 0);
         background->insert(backgroundCount, b);
         qDebug() << "create Background:" << backgroundCount;
         backgroundCount++;
@@ -182,6 +169,23 @@ void Model::createBrick(QList<int> l ,int num )
         goldCount++;
         break;
     }
+    case 4:{
+        this->darkEater = new DarkEater(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        break;
+    }
+    case 5:{
+        Mushroom* m = new Mushroom(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        this->mushroom->insert(mushroomCount, m);
+        mushroomCount++;
+        break;
+    }
+    case 6:{
+        Safe* t= new Safe(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        t->setCapacity(2);
+        safes->insert(safeCount,t);
+        safeCount++;
+        break;
+    }
     }
 }
 
@@ -194,12 +198,13 @@ void Model::brickOrganisation()
     QMutableMapIterator<int ,Floor * > i(*this->getFloors());
     QMutableMapIterator<int ,Safe * > j(*this->getSafes());
     QMutableMapIterator<int ,Gold * > g(*this->getGold());
+    QMutableMapIterator<int ,Mushroom * > m(*this->getMushroom());
 
     while (b0.hasNext()) {
         b0.next();
         if(b0.value()->getRect().x() < - b0.value()->getRect().width() + 2){
             b0.remove();
-            Background* b = new Background(800,0);
+            Background* b = new Background(1000,0);
             background->insert( backgroundCount, b);
             qDebug() << "create Background:" << backgroundCount;
             backgroundCount++;
@@ -238,10 +243,22 @@ void Model::brickOrganisation()
     while(g.hasNext()){
         g.next();
         if (g.value()->getRect().x()<=-brickSize || g.value()->isDestroyed()){
-            qDebug() << "Remove gggggggggggold"  ;
             g.remove();
         }
     }
+
+    while(m.hasNext()){
+        m.next();
+        if (m.value()->getRect().x()<=-brickSize || m.value()->isDestroyed()){
+            m.remove();
+        }
+    }
+}
+
+void Model::createMushroom(int x, int y){
+    Mushroom *m = new Mushroom(x+9, y+10);
+    mushroom->insert(mushroomCount, m);
+    mushroomCount++;
 }
 
 

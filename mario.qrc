@@ -22,5 +22,8 @@
         <file>images/fire_ball.png</file>
         <file>images/mysticTree.png</file>
         <file>ModelMap.txt</file>
+        <file>images/gold_big2.png</file>
+        <file>images/gold_big3.png</file>
+        <file>images/gold_sprites.png</file>
     </qresource>
 </RCC>
