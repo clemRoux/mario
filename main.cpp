@@ -2,6 +2,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include "model.h"
+#include "view.h"
 
 void center(QWidget &widget)
 {
@@ -28,9 +29,11 @@ void center(QWidget &widget)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    GameBoard window( NULL);
-    window.setWindowTitle("Mario Game");
-    window.show();
-    center(window);
+    Model m;
+    View v;
+    GameBoard window(&m, &v);
+    v.setWindowTitle("Mario Game");
+    v.show();
+    center(v);
     return app.exec();
 }

@@ -8,9 +8,11 @@
 #include "brick.h"
 class Gold : public Brick
 {
+
 public:
   Gold(int, int);
   inline QPixmap getSprite(){ return sprite; }
+  static int currentFrame;
   ~Gold();
 
 private:

@@ -1,26 +1,30 @@
 #include "gameboard.h"
-#include <QPainter>
 #include <QApplication>
 #include <QDebug>
+#include <QRect>
 #include "model.h"
+#include "view.h"
+#include <tuple>
 
-
-GameBoard::GameBoard(QWidget *parent)
-    : QWidget(parent)
+GameBoard::GameBoard(Model *m, View *v)
 {
-    timerId = startTimer(10);
-    this->model = new Model;
+    this->model = m;
+    this->view = v;
+    this->view->setControl(this);
     gameStarted = true;
-    moveL=false;
-    moveR=false;
+    isMovingR=false;
+    isMovingL=false;
     isJumping=false;
     xRelatif = -100;
     yRelatif = 0;
-    isSplashScreen = true;
     iterBackground=0;
+
 }
 
-//-------------------------------------------------------------------------------------------------------------//
+int Gold::currentFrame = 0;
+
+
+//----------------------------------------------------------------------------------------------------------------//
 
 GameBoard::~GameBoard()
 {
@@ -29,131 +33,9 @@ GameBoard::~GameBoard()
 
 //----------------------------------------------------------------------------------------------------------------//
 
-void GameBoard::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    QMap< int,Background *>::const_iterator b = model->getBackground()->constBegin();
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    QMap< int,Safe *>::const_iterator e = model->getSafes()->constBegin();
-    QMap< int,Mushroom *>::const_iterator m = model->getMushroom()->constBegin();
-    QMap< int,Gold *>::const_iterator g = model->getGold()->constBegin();
-
-    while (b != model->getBackground()->constEnd()) {
-        painter.drawImage(b.value()->getRect(),b.value()->getImage());
-        ++b;
-    }
-    while (i != model->getFloors()->constEnd()) {
-        painter.drawImage(i.value()->getRect(),i.value()->getImage());
-        ++i;
-    }
-    while (e != model->getSafes()->constEnd()) {
-        if(e.value()->getCapacity()==1)
-            e.value()->setImage(":images/floor_uni.png");
-        painter.drawImage(e.value()->getRect(),e.value()->getImage());
-        ++e;
-    }
-    while (m != model->getMushroom()->constEnd()) {
-        painter.drawImage(m.value()->getRect(),m.value()->getImage());
-        ++m;
-    }
-    while (g != model->getGold()->constEnd()) {
-        QRect srcRect = QRect(currentGoldFrame, 0, g.value()->getRect().width(), g.value()->getRect().height());
-        painter.drawPixmap(g.value()->getRect(), g.value()->getSprite(), srcRect);
-        ++g;
-    }
-    if(model->getDarkEater() != NULL){
-        QRect srcRect = QRect(currentDarkEaterFrame, 0, model->getDarkEater()->getRect().width(), model->getDarkEater()->getRect().height());
-        painter.drawPixmap(model->getDarkEater()->getRect(), model->getDarkEater()->getMoveLSprite(), srcRect);
-    }
-
-
-    QRect sourceRect = QRect(currentFrame+6, 1, model->getMario()->getRect().width(), model->getMario()->getRect().height()+3);
-    if(moveR){
-        painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getMoveRSprite(), sourceRect);
-    }
-    else if(moveL){
-        painter.drawPixmap(model->getMario()->getRect(), model->getMario()->getMoveLSprite(), sourceRect);
-    }
-    else
-        painter.drawPixmap(model->getMario()->getRect() ,model->getMario()->getStopSprite(), sourceRect);
-
-    painter.drawImage(model->getHeader()->getRect().width() - 100, model->getHeader()->getRect().height() / 8, model->getHeader()->getGold());
-    painter.setFont(QFont("Tahoma", 12, -1, false));
-    QString goldText = "x" + QString::number(model->getMario()->getGoldNumber());
-    painter.drawText(model->getHeader()->getGoldPosition(), goldText);
-
-    for(int i = 0 ; i < model->getMario()->getLife() ; i++)
-        painter.drawImage(model->getHeader()->getHeart().size().height() * i, 0, model->getHeader()->getHeart());
-
-    if(isSplashScreen){
-        opacity = opacity - 0.005;
-        painter.setOpacity(opacity);
-        painter.drawImage(model->getSplashScreen()->getRect(), model->getSplashScreen()->getImage());
-    }
-    else{
-        opacity = 1;
-        painter.setOpacity(opacity);
-    }
-    if(isHurted){
-        opacity = opacity - 0.01;
-        painter.setOpacity(opacity);
-        qDebug() << "HURT!!";
-        painter.drawPixmap(model->getMario()->getDieRect(), model->getMario()->getStopSprite(), QRect(0, 1, 57, 68));
-    }
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-void GameBoard::timerEvent(QTimerEvent *event)
-{
-    splashScreen();
-    movementMario();
-    movementMushroom();
-    movementDarkEater();
-    hurted();
-    model->brickOrganisation();
-    goldAnim();
-    repaint();
-}
-
-//----------------------------------------------------------------------------------------------------------------//
-
-void GameBoard::keyPressEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_Right)
-        moveR=true;
-    else if(event->key() == Qt::Key_Left)
-        moveL=true;
-    else if(event->key() == Qt::Key_Space && intersectBottomMario()){
-        isJumping=true;
-        startJumpY=model->getMario()->getRect().y();
-    }
-    else if (event->key() == Qt::Key_Escape)
-    {
-        stopGame();
-        qApp->exit();
-    }
-    else
-        event->ignore();
-}
-
-//----------------------------------------------------------------------------------------------------------------//
-
-void GameBoard::keyReleaseEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_Right )
-        moveR=false;
-    else if(event->key() == Qt::Key_Left )
-        moveL=false;
-    else
-        event->ignore();
-}
-
-//----------------------------------------------------------------------------------------------------------------//
-
 void GameBoard::stopGame()
 {
-    killTimer(timerId);
+    view->stopTimer();
     gameStarted = false;
 }
 
@@ -167,36 +49,36 @@ void GameBoard::movementMario()
         yRelatif=(-0.02*(xRelatif*xRelatif)+200);
         y = startJumpY-yRelatif;
         moveXMario(y);
-        currentFrame = 0;
+        model->getMario()->setCurrentFrame(0);
     }
     if(intersectBottomMario() || intersectTopMario()){
         xRelatif=-100;
         yRelatif=0;
         isJumping=false;
         moveXMario(y);
-        if(moveR && tempMove == 1){
-            currentFrame += 57;
-            if (currentFrame >= 1190 )
-                currentFrame = 1;
+        if(isMovingR && tempMove == 1){
+            model->getMario()->setCurrentFrame(model->getMario()->getCurrentFrame() + 57);
+            if (model->getMario()->getCurrentFrame() >= 1190 )
+                model->getMario()->setCurrentFrame(0);
             tempMove = 0;
         }
-        else if(moveR)
+        else if(isMovingR)
             tempMove++;
-        else if(moveL && tempMove == 1){
-            currentFrame -= 57;
-            if (currentFrame <= 0 )
-                currentFrame = 1191;
+        else if(isMovingL && tempMove == 1){
+            model->getMario()->setCurrentFrame(model->getMario()->getCurrentFrame() - 57);
+            if (model->getMario()->getCurrentFrame() <= 0 )
+                model->getMario()->setCurrentFrame(1191);
             tempMove = 0;
         }
-        else if(moveL)
+        else if(isMovingL)
             tempMove++;
         else
-            currentFrame = 0;
+            model->getMario()->setCurrentFrame(0);
     }
     if((!intersectBottomMario() && !isJumping )){
         y += 3;
         moveXMario(y);
-        currentFrame = 0;
+        model->getMario()->setCurrentFrame(0);
     }
     intersectGoldMario();
     intersectMushroomMario();
@@ -207,9 +89,9 @@ void GameBoard::movementDarkEater()
     if(model->getDarkEater() != NULL){
         model->getDarkEater()->move(model->getDarkEater()->getRect().x() - 2, model->getDarkEater()->getRect().y());
         if(darkEaterTempo == 10){
-            currentDarkEaterFrame += 104;
-            if (currentDarkEaterFrame >= 312 )
-                currentDarkEaterFrame = 1;
+            model->getDarkEater()->setCurrentFrame(model->getDarkEater()->getCurrentFrame() + 104);
+            if (model->getDarkEater()->getCurrentFrame() >= 312 )
+                model->getDarkEater()->setCurrentFrame(1);
             darkEaterTempo = 0;
         }
         else
@@ -221,11 +103,11 @@ void GameBoard::movementDarkEater()
 void GameBoard::moveXMario(int y)
 {
     int x=model->getMario()->getRect().x();
-    if(moveL && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
+    if(isMovingL && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
         x-=2;
-    else if(moveR && model->getMario()->getRect().x()<=350  && !intersectRightMario())
+    else if(isMovingR && model->getMario()->getRect().x()<=350  && !intersectRightMario())
         x+=2;
-    else if(moveR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
+    else if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
         movementMap();
     model->getMario()->move(x,y);
 }
@@ -365,6 +247,7 @@ void GameBoard::intersectMushroomMario()
     QMap< int,Mushroom *>::const_iterator j = model->getMushroom()->constBegin();
     while (j != model->getMushroom()->constEnd()) {
         if(model->getMario()->intersect(j.value()->getRect())){
+            model->getMario()->setIsLittle(true);
             j.value()->setDestroyed(true);
         }
         ++j;
@@ -377,19 +260,21 @@ void GameBoard::splashScreen(){
     int x=model->getSplashScreen()->getRect().x();
     int y=model->getSplashScreen()->getRect().y();
     y--;
-    if(model->getSplashScreen()->getRect().bottom() > 0 && isSplashScreen)
+    if(model->getSplashScreen()->getRect().bottom() > 0 && model->getSplashScreen()->getIsSplashScreen())
         model->getSplashScreen()->move(x, y);
     else
-        isSplashScreen = false;
+        model->getSplashScreen()->setIsSplashScreen(false);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
+
+
 void GameBoard::goldAnim(){
     if(temp == 20){
-        currentGoldFrame += 40;
-        if (currentGoldFrame >= 120 )
-            currentGoldFrame = 0;
+        Gold::currentFrame += 40;
+        if (Gold::currentFrame >= 120)
+            Gold::currentFrame = 0;
         temp = 0;
     }
     else
@@ -397,7 +282,7 @@ void GameBoard::goldAnim(){
 }
 
 void GameBoard::hurted(){
-    if(isHurted){
+    if(model->getMario()->getIsHurted()){
         if(opacity == 1)
             model->getMario()->setDieRect(QRect(model->getMario()->getRect().topLeft(), model->getMario()->getRect().bottomRight()));
         int x=model->getMario()->getDieRect().x();
@@ -407,7 +292,7 @@ void GameBoard::hurted(){
             model->getMario()->moveDie(x, y);
         }
         else{
-            isHurted = false;
+            model->getMario()->setIsHurted(false);
             model->getMario()->setLife(model->getMario()->getLife() - 1);
         }
     }
@@ -418,12 +303,12 @@ void GameBoard::movementMushroom(){
     while (m != model->getMushroom()->constEnd()) {
         if(m.value()->getMoveCount()>0){
             m.value()->setmoveCount(m.value()->getMoveCount() - 1);
-            if(moveR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
+            if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
                 m.value()->move(m.value()->getRect().x() - 2, m.value()->getRect().y() - 1);
             else
                 m.value()->move(m.value()->getRect().x(), m.value()->getRect().y() - 1);
         }
-        else if(moveR && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
+        else if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
             m.value()->move(m.value()->getRect().x() - 2, m.value()->getRect().y());
         }
         ++m;

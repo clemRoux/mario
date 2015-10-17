@@ -36,6 +36,7 @@ public:
     inline QMap<int, Mushroom*> *getMushroom(){ return mushroom; }
     inline QMap<int, Gold*> *getGold(){ return golds; }
     inline DarkEater *getDarkEater(){ return darkEater; }
+    //inline QList<MyGameObject> getGameObjects(){ return this->_GameObjects; }
     inline int getBackgroundCount(){ return backgroundCount; }
     inline int getMushroomCount(){ return mushroomCount; }
     void createMushroom(int, int);
@@ -45,6 +46,12 @@ public:
     static int const NbrBrickVisible = 20;
 
 private:
+    /*struct MyGameObject{
+
+    };
+    MyGameObject _GameObjects;
+    */
+
     QMap<int, Safe*> *safes;
     QMap<int, Mushroom*> *mushroom;
     QMap<int, Floor*> *floors;
@@ -52,14 +59,15 @@ private:
     QMap<int, Background*> *background;
     QMap<int, Gold*> *golds;
     DarkEater *darkEater;
+    Mario *mario;
+    SplashScreen *splashScreen;
+    Header *header;
+
     QList<int> ligne1;
     QList<int> ligne2;
     QList<int> ligne3;
     QList<int> ligne4;
     QList<int> ligne5;
-    Mario *mario;
-    SplashScreen *splashScreen;
-    Header *header;
     int floorCount=0;
     int safeCount=0;
     int backgroundCount=0;

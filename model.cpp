@@ -11,6 +11,7 @@
 
 Model::Model()
 {
+    this->background = new QMap<int,Background *>;
     this->floors = new QMap<int,Floor *>;
     this->safes = new QMap<int,Safe *>;
     this->mushroom = new QMap<int,Mushroom *>;
@@ -171,12 +172,6 @@ void Model::createBrick(QList<int> l ,int num )
     }
     case 4:{
         this->darkEater = new DarkEater(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
-        break;
-    }
-    case 5:{
-        Mushroom* m = new Mushroom(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
-        this->mushroom->insert(mushroomCount, m);
-        mushroomCount++;
         break;
     }
     case 6:{

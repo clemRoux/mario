@@ -8,24 +8,19 @@
 #include "safe.h"
 #include "floor.h"
 #include "mario.h"
-#include "gold.h"
+
 
 class Model;
+class View;
 
-class GameBoard : public QWidget
+
+class GameBoard
 {
-    Q_OBJECT
 
 
 public:
-    GameBoard(QWidget *parent = 0);
+    GameBoard(Model *m, View *v);
     ~GameBoard();
-
-  protected:
-    void paintEvent(QPaintEvent *event);
-    void timerEvent(QTimerEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
     void stopGame();
     void movementMario();
     void moveXMario(int );
@@ -42,27 +37,37 @@ public:
     void intersectMushroomMario();
     void goldAnim();
     void movementDarkEater();
+    inline bool getIsMovingR(){ return isMovingR; }
+    inline bool getIsMovingL(){ return isMovingL; }
+    inline bool getIsJumping(){ return isJumping; }
+    inline void setIsMovingR(bool is){ this->isMovingR = is; }
+    inline void setIsMovingL(bool is){ this->isMovingL = is; }
+    inline void setIsJumping(bool is){ this->isJumping = is; }
+    inline std::tuple<> getAllObjects();
+    inline Model *getModel(){ return this->model; }
+    inline qreal getOpacity(){ return opacity; }
+    inline void setOpacity(qreal opacity){this->opacity = opacity; }
+    inline int getStartJumpY(){ return startJumpY; }
+    inline void setStartJumpY(int startJumpY){this->startJumpY = startJumpY; }
 
 private:
     Model *model;
-    int timerId;
+    View *view;
     bool gameStarted;
     int xRelatif;
     int yRelatif;
     int startJumpY;
-    bool moveR;
-    bool moveL;
-    bool isJumping;
-    bool isSplashScreen;
     int iterBackground;
-    float currentFrame =1;
     int tempMove = 0;
-    qreal opacity = 1;
-    bool isHurted = false;
-    int currentGoldFrame = 0;
-    int temp = 0;
-    int currentDarkEaterFrame = 0;
+    bool isMovingR;
+    bool isMovingL;
+    bool isJumping;
+    int marioSize;
     int darkEaterTempo = 0;
+    int temp = 0;
+    qreal opacity = 1;
+
+
 
 
 };
