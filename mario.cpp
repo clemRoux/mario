@@ -56,3 +56,4 @@ bool Mario::intersectLeft(QRect r)
     }
     else return false;
 }
+

@@ -5,13 +5,14 @@
 #include <QMutableMapIterator>
 #include <QFile>
 #include <QString>
-#include <splashscreen.h>
+#include <QList>
+#include <QTextStream>
+
+#include "splashscreen.h"
 #include "header.h"
 #include "background.h"
 #include "mushroom.h"
 #include "darkeater.h"
-#include <QTextStream>
-#include <QList>
 
 class Safe;
 class Floor;
@@ -29,16 +30,15 @@ public:
     inline Mario *getMario(){ return mario; }
     SplashScreen *getSplashScreen(){ return splashScreen; }
     Header *getHeader(){ return header; }
-    QMap<int, Brick*> *getCompteur(){ return compteur; }
-    inline QMap<int, Safe*> *getSafes(){ return safes; }
-    inline QMap<int, Floor*> *getFloors(){ return floors; }
-    inline QMap<int, Background*> *getBackground(){ return background; }
-    inline QMap<int, Mushroom*> *getMushroom(){ return mushroom; }
-    inline QMap<int, Gold*> *getGold(){ return golds; }
+    QList<Brick*> *getCompteur(){ return compteur; }
+    inline QList<Safe*> *getSafes(){ return safes; }
+    inline QList<Floor*> *getFloors(){ return floors; }
+    inline QList<Background*> *getBackground(){ return background; }
+    inline QList<Mushroom*> *getMushroom(){ return mushroom; }
+    inline QList<Gold*> *getGold(){ return golds; }
     inline DarkEater *getDarkEater(){ return darkEater; }
-    //inline QList<MyGameObject> getGameObjects(){ return this->_GameObjects; }
-    inline int getBackgroundCount(){ return backgroundCount; }
-    inline int getMushroomCount(){ return mushroomCount; }
+    inline int getSpeed(){ return speed; }
+    inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
     static int const brickSize = 50;
     static int const Hauteur =500;
@@ -46,18 +46,12 @@ public:
     static int const NbrBrickVisible = 20;
 
 private:
-    /*struct MyGameObject{
-
-    };
-    MyGameObject _GameObjects;
-    */
-
-    QMap<int, Safe*> *safes;
-    QMap<int, Mushroom*> *mushroom;
-    QMap<int, Floor*> *floors;
-    QMap<int, Brick*> *compteur;
-    QMap<int, Background*> *background;
-    QMap<int, Gold*> *golds;
+    QList<Safe*> *safes;
+    QList<Mushroom*> *mushroom;
+    QList<Floor*> *floors;
+    QList<Brick*> *compteur;
+    QList<Background*> *background;
+    QList<Gold*> *golds;
     DarkEater *darkEater;
     Mario *mario;
     SplashScreen *splashScreen;
@@ -68,12 +62,9 @@ private:
     QList<int> ligne3;
     QList<int> ligne4;
     QList<int> ligne5;
-    int floorCount=0;
-    int safeCount=0;
     int backgroundCount=0;
-    int mushroomCount=0;
     int mapPosition=0;
-    int goldCount=0;
+    int speed = 4;
 };
 
 #endif // MODEL_H

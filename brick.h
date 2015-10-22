@@ -4,12 +4,13 @@
 #include <QImage>
 #include <QRect>
 #include <QString>
+#include "paintvisitor.h"
 
 class Brick
 {
 
   public:
-
+    static int speed;
     Brick(int ,int );
     Brick(int, int , QString );
     ~Brick();
@@ -21,12 +22,18 @@ class Brick
     void setImage(QString i){ image.load(i); }
     void move(int ,int );
     void moveBrick();
+    void accept(PaintVisitor *p){ p->visitImage(this); }
+    inline QPixmap getSprite(){ return sprite; }
+    inline QRect getSrcRect(){ return srcRect; }
+    inline void setSrcRect(QRect srcRect){ this->srcRect = srcRect; }
 
   private:
-
     QImage image;
     QRect rect;
     bool destroyed;
+protected:
+    QPixmap sprite;
+    QRect srcRect;
 
 };
 

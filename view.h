@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QKeyEvent>
 #include <QMutableMapIterator>
+#include <QDebug>
+
 #include "safe.h"
 #include "floor.h"
 #include "mario.h"
@@ -17,22 +19,23 @@ class GameBoard;
 
 class View : public QWidget
 {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
     View(QWidget *parent = 0);
     void setControl(GameBoard *control){ this->control = control; }
-    void stopTimer();
 
 private:
     void paintEvent(QPaintEvent *event);
-    void timerEvent(QTimerEvent *event);
+    void timerEvent(QTimerEvent *event){}
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
-    int timerId;
     GameBoard *control;
     int marioSize;
+
+public slots:
+    void paintIt(){ update(); }
 
 };
 

@@ -2,41 +2,55 @@
 #include <QApplication>
 #include <QDebug>
 #include <QRect>
+#include <QTimer>
+
 #include "model.h"
 #include "view.h"
-#include <tuple>
 
-GameBoard::GameBoard(Model *m, View *v)
+GameBoard::GameBoard(Model *m, View *v) : QObject()
 {
     this->model = m;
     this->view = v;
     this->view->setControl(this);
     gameStarted = true;
-    isMovingR=false;
-    isMovingL=false;
-    isJumping=false;
     xRelatif = -100;
     yRelatif = 0;
     iterBackground=0;
 
+    timerId = startTimer(10);
+
+    connect(this, SIGNAL(sendPaintIt()), view, SLOT(paintIt()));
 }
 
 int Gold::currentFrame = 0;
-
+int Brick::speed = 4;
 
 //----------------------------------------------------------------------------------------------------------------//
 
 GameBoard::~GameBoard()
 {
-    delete model;
 }
 
 //----------------------------------------------------------------------------------------------------------------//
 
 void GameBoard::stopGame()
 {
-    view->stopTimer();
+    killTimer(timerId);
     gameStarted = false;
+}
+
+//----------------------------------------------------------------------------------------------------------------//
+
+void GameBoard::timerEvent(QTimerEvent *event)
+{
+    splashScreen();
+    movementMario();
+    movementMushroom();
+    //movementDarkEater();
+    hurted();
+    model->brickOrganisation();
+    goldAnim();
+    emit sendPaintIt();
 }
 
 //----------------------------------------------------------------------------------------------------------------//
@@ -44,7 +58,7 @@ void GameBoard::stopGame()
 void GameBoard::movementMario()
 {
     int y=model->getMario()->getRect().y();
-    if(isJumping && !intersectTopMario()){
+    if(getIsJumping() && !intersectTopMario()){
         xRelatif+=3;
         yRelatif=(-0.02*(xRelatif*xRelatif)+200);
         y = startJumpY-yRelatif;
@@ -54,29 +68,29 @@ void GameBoard::movementMario()
     if(intersectBottomMario() || intersectTopMario()){
         xRelatif=-100;
         yRelatif=0;
-        isJumping=false;
+        setIsJumping(false);
         moveXMario(y);
-        if(isMovingR && tempMove == 1){
+        if(getIsMovingR() && tempMove == 1){
             model->getMario()->setCurrentFrame(model->getMario()->getCurrentFrame() + 57);
             if (model->getMario()->getCurrentFrame() >= 1190 )
                 model->getMario()->setCurrentFrame(0);
             tempMove = 0;
         }
-        else if(isMovingR)
+        else if(getIsMovingR())
             tempMove++;
-        else if(isMovingL && tempMove == 1){
+        else if(getIsMovingL() && tempMove == 1){
             model->getMario()->setCurrentFrame(model->getMario()->getCurrentFrame() - 57);
             if (model->getMario()->getCurrentFrame() <= 0 )
                 model->getMario()->setCurrentFrame(1191);
             tempMove = 0;
         }
-        else if(isMovingL)
+        else if(getIsMovingL())
             tempMove++;
         else
             model->getMario()->setCurrentFrame(0);
     }
-    if((!intersectBottomMario() && !isJumping )){
-        y += 3;
+    if((!intersectBottomMario() && !getIsJumping() )){
+        y += 4;
         moveXMario(y);
         model->getMario()->setCurrentFrame(0);
     }
@@ -103,11 +117,11 @@ void GameBoard::movementDarkEater()
 void GameBoard::moveXMario(int y)
 {
     int x=model->getMario()->getRect().x();
-    if(isMovingL && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
-        x-=2;
-    else if(isMovingR && model->getMario()->getRect().x()<=350  && !intersectRightMario())
-        x+=2;
-    else if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
+    if(getIsMovingL() && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
+        x -= Brick::speed;
+    else if(getIsMovingR() && model->getMario()->getRect().x()<=350  && !intersectRightMario())
+        x += Brick::speed;
+    else if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
         movementMap();
     model->getMario()->move(x,y);
 }
@@ -116,141 +130,121 @@ void GameBoard::moveXMario(int y)
 
 void GameBoard::movementMap()
 {
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()) {
-        i.value()->moveBrick();
-        ++i;
+    for(int i = 0; i<model->getFloors()->size(); i++){
+        model->getFloors()->at(i)->moveBrick();
     }
-    QMap< int,Background *>::const_iterator k = model->getBackground()->constBegin();
-    if(iterBackground== 4){
-        while (k != model->getBackground()->constEnd()) {
-            k.value()->moveBrick();
-            ++k;
+
+    if(iterBackground == 4){
+        for(int i = 0; i<model->getBackground()->size(); i++){
+            model->getBackground()->at(i)->moveBrick();
         }
         iterBackground=0;
     }
     else{
-        while (k != model->getBackground()->constEnd()) {
-            k.value()->move(k.value()->getRect().x(), k.value()->getRect().y());
-            ++k;
+        for(int i = 0; i<model->getBackground()->size(); i++){
+            model->getBackground()->at(i)->move(model->getBackground()->at(i)->getRect().x(), model->getBackground()->at(i)->getRect().y());
         }
         iterBackground++;
     }
-    QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
-    while (j != model->getSafes()->constEnd()) {
-        j.value()->moveBrick();
-        ++j;
+
+    for(int i = 0; i<model->getSafes()->size(); i++){
+        model->getSafes()->at(i)->moveBrick();
     }
-    QMap< int,Brick *>::const_iterator s = model->getCompteur()->constBegin();
-    while (s!= model->getCompteur()->constEnd()) {
-        s.value()->moveBrick();
-        ++s;
+
+    for(int i = 0; i<model->getCompteur()->size(); i++){
+        model->getCompteur()->at(i)->moveBrick();
     }
-    QMap< int,Gold *>::const_iterator g = model->getGold()->constBegin();
-    while (g!= model->getGold()->constEnd()) {
-        g.value()->moveBrick();
-          ++g;
+
+    for(int i = 0; i<model->getGold()->size(); i++){
+        model->getGold()->at(i)->moveBrick();
     }
+
+
 }
 
 //----------------------------------------------------------------------------------------------------------------//
 
 bool GameBoard::intersectTopMario()
 {
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()) {
-        if(model->getMario()->intersectTop(i.value()->getRect()))
+    for(int i = 0; i<model->getFloors()->size(); i++){
+        if(model->getMario()->intersectTop(model->getFloors()->at(i)->getRect()))
             return true;
-        ++i;
     }
-    QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
-    while (j != model->getSafes()->constEnd()) {
-        if(model->getMario()->intersectTop(j.value()->getRect())){
-            if(j.value()->getCapacity()){
-                if(j.value()->getCapacity() == 2){
-                    model->createMushroom(j.value()->getRect().x(), j.value()->getRect().y());
-                    j.value()->setCapacity(1);
+
+    for(int i = 0; i<model->getSafes()->size(); i++){
+        if(model->getMario()->intersectTop(model->getSafes()->at(i)->getRect())){
+            if(model->getSafes()->at(i)->getCapacity()){
+                if(model->getSafes()->at(i)->getCapacity() == 2){
+                    model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y());
+                    model->getSafes()->at(i)->setCapacity(1);
                 }
             }else
-                j.value()->setDestroyed(true);
+                model->getSafes()->at(i)->setDestroyed(true);
             return true;
         }
-        ++j;
     }
     return false;
 }
 
 bool GameBoard::intersectBottomMario()
 {
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()){
-        if(model->getMario()->intersectBottom(i.value()->getRect()))
+    for(int i = 0; i<model->getFloors()->size(); i++){
+        if(model->getMario()->intersectBottom(model->getFloors()->at(i)->getRect()))
             return true;
-        ++i;
     }
-    QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
-    while (j != model->getSafes()->constEnd()) {
-        if(model->getMario()->intersectBottom(j.value()->getRect()))
+
+    for(int i = 0; i<model->getSafes()->size(); i++){
+        if(model->getMario()->intersectBottom(model->getSafes()->at(i)->getRect()))
             return true;
-        ++j;
     }
     return false;
 }
 
 bool GameBoard::intersectLeftMario()
 {
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()) {
-        if(model->getMario()->intersectLeft(i.value()->getRect()))
+    for(int i = 0; i<model->getFloors()->size(); i++){
+        if(model->getMario()->intersectLeft(model->getFloors()->at(i)->getRect()))
             return true;
-        ++i;
     }
-    QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
-    while (j != model->getSafes()->constEnd()) {
-        if(model->getMario()->intersectLeft(j.value()->getRect()))
+    for(int i = 0; i<model->getSafes()->size(); i++){
+        if(model->getMario()->intersectLeft(model->getSafes()->at(i)->getRect()))
             return true;
-        ++j;
     }
     return false;
 }
 
 bool GameBoard::intersectRightMario()
 {
-    QMap< int,Floor *>::const_iterator i = model->getFloors()->constBegin();
-    while (i != model->getFloors()->constEnd()) {
-        if(model->getMario()->intersectRight(i.value()->getRect()))
+    for(int i = 0; i<model->getFloors()->size(); i++){
+        if(model->getMario()->intersectRight(model->getFloors()->at(i)->getRect()))
             return true;
-        ++i;
     }
-    QMap< int,Safe *>::const_iterator j = model->getSafes()->constBegin();
-    while (j != model->getSafes()->constEnd()) {
-        if(model->getMario()->intersectRight(j.value()->getRect()))
+
+    for(int i = 0; i<model->getSafes()->size(); i++){
+        if(model->getMario()->intersectRight(model->getSafes()->at(i)->getRect()))
             return true;
-        ++j;
     }
     return false;
 }
 
 void GameBoard::intersectGoldMario()
 {
-    QMap< int,Gold *>::const_iterator j = model->getGold()->constBegin();
-    while (j != model->getGold()->constEnd()) {
-        if(model->getMario()->intersect(j.value()->getRect())){
-            j.value()->setDestroyed(true);
-            model->getMario()->setGoldNumber(model->getMario()->getGoldNumber()+1);}
-        ++j;
+    for(int i = 0; i<model->getGold()->size(); i++){
+        if(model->getMario()->intersect(model->getGold()->at(i)->getRect())){
+            model->getGold()->at(i)->setDestroyed(true);
+            model->getMario()->setGoldNumber(model->getMario()->getGoldNumber()+1);
+        }
     }
 }
 
 void GameBoard::intersectMushroomMario()
 {
-    QMap< int,Mushroom *>::const_iterator j = model->getMushroom()->constBegin();
-    while (j != model->getMushroom()->constEnd()) {
-        if(model->getMario()->intersect(j.value()->getRect())){
+    for(int i = 0; i<model->getMushroom()->size(); i++){
+        if(model->getMario()->intersect(model->getMushroom()->at(i)->getRect())){
+            model->getMushroom()->at(i)->setDestroyed(true);
             model->getMario()->setIsLittle(true);
-            j.value()->setDestroyed(true);
+            Brick::speed = 2;
         }
-        ++j;
     }
 }
 
@@ -299,18 +293,16 @@ void GameBoard::hurted(){
 }
 
 void GameBoard::movementMushroom(){
-    QMap< int,Mushroom *>::const_iterator m = model->getMushroom()->constBegin();
-    while (m != model->getMushroom()->constEnd()) {
-        if(m.value()->getMoveCount()>0){
-            m.value()->setmoveCount(m.value()->getMoveCount() - 1);
-            if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario())
-                m.value()->move(m.value()->getRect().x() - 2, m.value()->getRect().y() - 1);
+    for(int i = 0; i<model->getMushroom()->size(); i++){
+        if(model->getMushroom()->at(i)->getMoveCount()>0){
+            model->getMushroom()->at(i)->setmoveCount(model->getMushroom()->at(i)->getMoveCount() - 1);
+            if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
+                model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - 2, model->getMushroom()->at(i)->getRect().y() - 1);
             else
-                m.value()->move(m.value()->getRect().x(), m.value()->getRect().y() - 1);
+                model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x(), model->getMushroom()->at(i)->getRect().y() - 1);
         }
-        else if(isMovingR && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
-            m.value()->move(m.value()->getRect().x() - 2, m.value()->getRect().y());
+        else if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
+            model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - 2, model->getMushroom()->at(i)->getRect().y());
         }
-        ++m;
     }
 }

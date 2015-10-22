@@ -5,8 +5,11 @@
 
 Person::Person(int x, int y)
 {
-     rect.translate(x, y);
+    rect.translate(x, y);
     dead = false;
+    isMovingR=false;
+    isMovingL=false;
+    isJumping=false;
 }
 
 Person::~Person()
@@ -37,6 +40,7 @@ void Person::moveDie(int x ,int y)
 bool Person::intersect(QRect r)
 {
     if(r.intersects(getRect()))
-            return true;
-    else return false;
+       return true;
+    else
+        return false;
 }

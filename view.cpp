@@ -5,71 +5,60 @@
 #include <QRect>
 #include <tuple>
 #include "model.h"
+#include "paintvisitor.h"
 
 View::View(QWidget *parent): QWidget(parent)
 
 {
-    timerId = startTimer(10);
 
 }
 
 void View::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
+    PaintVisitor *pVisitor = new PaintVisitor(&painter);
 
-    QMap< int,Safe *>::const_iterator e = control->getModel()->getSafes()->constBegin() ;
-    QMap< int,Background *>::const_iterator b = control->getModel()->getBackground()->constBegin() ;
-    QMap< int,Floor *>::const_iterator i = control->getModel()->getFloors()->constBegin();
-    QMap< int,Gold *>::const_iterator g = control->getModel()->getGold()->constBegin();
-    QMap< int,Mushroom *>::const_iterator m = control->getModel()->getMushroom()->constBegin() ;
+    for(int i = 0; i<control->getModel()->getBackground()->size(); i++){
+        control->getModel()->getBackground()->at(i)->accept(pVisitor);
+    }
 
-    while (b != control->getModel()->getBackground()->constEnd()) {
-        painter.drawImage(b.value()->getRect(),b.value()->getImage());
-        ++b;
+    for(int i = 0; i<control->getModel()->getFloors()->size(); i++){
+        control->getModel()->getFloors()->at(i)->accept(pVisitor);
     }
-    while (i != control->getModel()->getFloors()->constEnd()) {
-        painter.drawImage(i.value()->getRect(),i.value()->getImage());
-        ++i;
+
+    for(int i = 0; i<control->getModel()->getSafes()->size(); i++){
+        if(control->getModel()->getSafes()->at(i)->getCapacity()==1)
+            control->getModel()->getSafes()->at(i)->setImage(":images/floor_uni.png");
+        control->getModel()->getSafes()->at(i)->accept(pVisitor);
     }
-    while (e != control->getModel()->getSafes()->constEnd()) {
-        if(e.value()->getCapacity()==1)
-            e.value()->setImage(":images/floor_uni.png");
-        painter.drawImage(e.value()->getRect(),e.value()->getImage());
-        ++e;
+
+    for(int i = 0; i<control->getModel()->getMushroom()->size(); i++){
+        control->getModel()->getMushroom()->at(i)->accept(pVisitor);
     }
-    while (m != control->getModel()->getMushroom()->constEnd()) {
-        painter.drawImage(m.value()->getRect(),m.value()->getImage());
-        ++m;
+
+    for(int i = 0; i<control->getModel()->getGold()->size(); i++){
+        control->getModel()->getGold()->at(i)->setSrcRect(QRect(Gold::currentFrame, 0, control->getModel()->getGold()->at(i)->getRect().width(), control->getModel()->getGold()->at(i)->getRect().height()));
+        control->getModel()->getGold()->at(i)->accept(pVisitor);
     }
-    while (g != control->getModel()->getGold()->constEnd()) {
-        QRect srcRect = QRect(Gold::currentFrame, 0, g.value()->getRect().width(), g.value()->getRect().height());
-        painter.drawPixmap(g.value()->getRect(), g.value()->getSprite(), srcRect);
-        ++g;
-    }
-    if(control->getModel()->getDarkEater() != NULL){
+
+    if(!control->getModel()->getDarkEater()->isDead()){
         QRect srcRect = QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height());
         painter.drawPixmap(control->getModel()->getDarkEater()->getRect(), control->getModel()->getDarkEater()->getMoveLSprite(), srcRect);
     }
-    QRect sourceRect;
+
     if(control->getModel()->getMario()->getIsLittle()){
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 25, control->getModel()->getMario()->getMoveRSprite().height() - 30));
-        sourceRect = QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+20, control->getModel()->getMario()->getRect().height()+30);
+        control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+20, control->getModel()->getMario()->getRect().height()+30));
     }
     else{
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 45, control->getModel()->getMario()->getMoveRSprite().height() - 7));
-        sourceRect = QRect(control->getModel()->getMario()->getCurrentFrame()+6, 1, control->getModel()->getMario()->getRect().width(), control->getModel()->getMario()->getRect().height());
+        control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 1, control->getModel()->getMario()->getRect().width(), control->getModel()->getMario()->getRect().height()));
     }
 
-    if(control->getIsMovingR()){
-        painter.drawPixmap(control->getModel()->getMario()->getRect(), control->getModel()->getMario()->getMoveRSprite(), sourceRect);
-    }
-    else if(control->getIsMovingL()){
-        painter.drawPixmap(control->getModel()->getMario()->getRect(), control->getModel()->getMario()->getMoveLSprite(), sourceRect);
-    }
-    else
-        painter.drawPixmap(control->getModel()->getMario()->getRect() ,control->getModel()->getMario()->getStopSprite(), sourceRect);
+    control->getModel()->getMario()->accept(pVisitor);
 
-    painter.drawImage(control->getModel()->getHeader()->getRect().width() - 100, control->getModel()->getHeader()->getRect().height() / 8, control->getModel()->getHeader()->getGold());
+    // Paint Header Texts & Images
+    painter.drawImage(control->getModel()->getHeader()->getRect().width() - 0, control->getModel()->getHeader()->getRect().height() / 8, control->getModel()->getHeader()->getGold());
     painter.setFont(QFont("Tahoma", 12, -1, false));
     QString goldText = "x" + QString::number(control->getModel()->getMario()->getGoldNumber());
     painter.drawText(control->getModel()->getHeader()->getGoldPosition(), goldText);
@@ -77,38 +66,27 @@ void View::paintEvent(QPaintEvent *)
     for(int i = 0 ; i < control->getModel()->getMario()->getLife() ; i++)
         painter.drawImage(control->getModel()->getHeader()->getHeart().size().height() * i, 0, control->getModel()->getHeader()->getHeart());
 
-    if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
-        control->setOpacity(control->getOpacity() - 0.005);
-        painter.setOpacity(control->getOpacity());
-        painter.drawImage(control->getModel()->getSplashScreen()->getRect(), control->getModel()->getSplashScreen()->getImage());
-    }
-    else{
-        control->setOpacity(1);
-        painter.setOpacity(control->getOpacity());
-    }
+    // Paint Mario's fantom when loosing a life
     if(control->getModel()->getMario()->getIsHurted()){
         control->setOpacity(control->getOpacity() - 0.01);
         painter.setOpacity(control->getOpacity());
         qDebug() << "HURT!!";
         painter.drawPixmap(control->getModel()->getMario()->getDieRect(), control->getModel()->getMario()->getStopSprite(), QRect(0, 1, 57, 68));
     }
+
+    // Paint SplashScreen
+    if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
+        control->setOpacity(control->getOpacity() - 0.004);
+        painter.setOpacity(control->getOpacity());
+        control->getModel()->getSplashScreen()->accept(pVisitor);
+    }
+    else{
+        control->setOpacity(1);
+        painter.setOpacity(control->getOpacity());
+    }
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
-
-void View::timerEvent(QTimerEvent *event)
-{
-    control->splashScreen();
-    control->movementMario();
-    control->movementMushroom();
-    control->movementDarkEater();
-    control->hurted();
-    control->getModel()->brickOrganisation();
-    control->goldAnim();
-    repaint();
-}
-
-//----------------------------------------------------------------------------------------------------------------//
 
 void View::keyPressEvent(QKeyEvent *event)
 {
@@ -139,8 +117,4 @@ void View::keyReleaseEvent(QKeyEvent *event)
         control->setIsMovingL(false);
     else
         event->ignore();
-}
-
-void View::stopTimer(){
-    killTimer(timerId);
 }

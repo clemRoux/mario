@@ -11,12 +11,10 @@ class Gold : public Brick
 
 public:
   Gold(int, int);
-  inline QPixmap getSprite(){ return sprite; }
+  void accept(PaintVisitor *p){ p->visitPixmap(this); }
   static int currentFrame;
   ~Gold();
 
-private:
-  QPixmap sprite;
 };
 
 #endif // GOLD_H

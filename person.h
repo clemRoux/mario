@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QRect>
 #include <QString>
+#include "paintvisitor.h"
 
 class Person
 {
@@ -15,6 +16,8 @@ class Person
     bool isDead();
     inline void setDead(bool);
     inline QRect getRect(){ return rect; }
+    inline void setSrcRect(QRect srcRect){ this->srcRect = srcRect; }
+    inline QRect getSrcRect(){ return srcRect; }
     inline void setRect(QRect rect){ this->rect = rect; }
     inline QRect getDieRect(){ return dieRect; }
     inline void setDieRect(QRect dieRect){ this->dieRect = dieRect; }
@@ -24,11 +27,18 @@ class Person
     inline void setMoveRSprite(QString m){ moveRSprite.load(m); }
     inline void setMoveLSprite(QString m){ moveLSprite.load(m); }
     inline void setStopSprite(QString m){ stopSprite.load(m); }
+    inline bool getIsMovingR(){ return isMovingR; }
+    inline bool getIsMovingL(){ return isMovingL; }
+    inline bool getIsJumping(){ return isJumping; }
+    inline void setIsMovingR(bool is){ this->isMovingR = is; }
+    inline void setIsMovingL(bool is){ this->isMovingL = is; }
+    inline void setIsJumping(bool is){ this->isJumping = is; }
     void move(int , int);
     void moveDie(int ,int );
     inline int getLife(){ return life; }
     inline void setLife(int life){ this->life = life; }
     bool intersect(QRect );
+    void accept(PaintVisitor *p){ p->visitPixmap(this); }
 
 protected:
     QPixmap moveRSprite;
@@ -37,7 +47,10 @@ protected:
     QPixmap jumpSprite;
     QRect rect;
     QRect dieRect;
-
+    QRect srcRect;
+    bool isMovingR;
+    bool isMovingL;
+    bool isJumping;
    private:
     bool dead;
     int life = 5;
