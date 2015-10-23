@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MarioProject
 TEMPLATE = app
-QMAKE_CXXFLAGS+= -std=c++11
+QMAKE_CXXFLAGS+= -std=c++11 -O3
 QMAKE_LFLAGS +=  -std=c++11
 
 RESOURCES += mario.qrc

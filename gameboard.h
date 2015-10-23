@@ -36,6 +36,7 @@ public:
     bool intersectLeftMario();
     void intersectGoldMario();
     void intersectMushroomMario();
+    void intersectDarkEaterMario();
     void goldAnim();
     void movementDarkEater();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }

@@ -1,5 +1,6 @@
 #include "mario.h"
 #include <iostream>
+#include <QDebug>
 
 Mario::Mario(int x, int y ) : Person(x,y)
 {
@@ -21,7 +22,8 @@ bool Mario::intersectTop(QRect r)
 {
     if(r.intersected(getRect()).width() > 5 ){
         if(getRect().y() > r.y()){
-            move(getRect().x(),r.y()+50);
+            //qDebug() << getRect().y();
+            move(getRect().x(),r.y() + 50);
             return true;
         }
     }
@@ -41,7 +43,7 @@ bool Mario::intersectBottom(QRect r)
 
 bool Mario::intersectRight(QRect r)
 {
-    if(r.intersected(getRect()).height() > 2 ){
+    if(r.intersected(getRect()).height() > 5 ){
         if(getRect().x() < r.x())
             return true;
     }
@@ -50,7 +52,7 @@ bool Mario::intersectRight(QRect r)
 
 bool Mario::intersectLeft(QRect r)
 {
-    if(r.intersected(getRect()).height() > 2){
+    if(r.intersected(getRect()).height() > 5){
         if(getRect().x() > r.x())
             return true;
     }

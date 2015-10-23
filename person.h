@@ -39,6 +39,8 @@ class Person
     inline void setLife(int life){ this->life = life; }
     bool intersect(QRect );
     void accept(PaintVisitor *p){ p->visitPixmap(this); }
+    void setUntouchable(bool touch){ this->unTouchable = touch; }
+    bool getUntouchable(){ return this->unTouchable; }
 
 protected:
     QPixmap moveRSprite;
@@ -53,6 +55,7 @@ protected:
     bool isJumping;
    private:
     bool dead;
+    bool unTouchable = false;
     int life = 5;
 
 };

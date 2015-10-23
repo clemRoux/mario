@@ -134,6 +134,7 @@ void Model::createBrick(QList<int> l ,int num )
     }
     case 4:{
         this->darkEater = new DarkEater(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        this->darkEaterBool = true;
         break;
     }
     case 6:{
@@ -195,9 +196,6 @@ void Model::brickOrganisation()
             mushroom->removeAt(i);
         }
     }
-
-    if(darkEater->isDead())
-        delete darkEater;
 }
 
 void Model::createMushroom(int x, int y){

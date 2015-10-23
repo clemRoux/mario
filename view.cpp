@@ -66,13 +66,7 @@ void View::paintEvent(QPaintEvent *)
     for(int i = 0 ; i < control->getModel()->getMario()->getLife() ; i++)
         painter.drawImage(control->getModel()->getHeader()->getHeart().size().height() * i, 0, control->getModel()->getHeader()->getHeart());
 
-    // Paint Mario's fantom when loosing a life
-    if(control->getModel()->getMario()->getIsHurted()){
-        control->setOpacity(control->getOpacity() - 0.01);
-        painter.setOpacity(control->getOpacity());
-        qDebug() << "HURT!!";
-        painter.drawPixmap(control->getModel()->getMario()->getDieRect(), control->getModel()->getMario()->getStopSprite(), QRect(0, 1, 57, 68));
-    }
+
 
     // Paint SplashScreen
     if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
@@ -81,9 +75,18 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getSplashScreen()->accept(pVisitor);
     }
     else{
-        control->setOpacity(1);
         painter.setOpacity(control->getOpacity());
     }
+
+    // Paint Mario's fantom when loosing a life
+    if(control->getModel()->getMario()->getIsHurted()){
+        control->setOpacity(control->getOpacity() - 0.005);
+        painter.setOpacity(control->getOpacity());
+        painter.drawPixmap(control->getModel()->getMario()->getDieRect(), control->getModel()->getMario()->getStopSprite(), QRect(0, 1, 57, 68));
+    }
+    else
+        control->setOpacity(1);
+
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

@@ -40,6 +40,8 @@ public:
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
+    bool getDarkEaterBool(){ return darkEaterBool; }
+    void setDarkEaterBool(bool value){ this->darkEaterBool = value; }
     static int const brickSize = 50;
     static int const Hauteur =500;
     static int const Longueur =1000;
@@ -65,6 +67,7 @@ private:
     int backgroundCount=0;
     int mapPosition=0;
     int speed = 4;
+    bool darkEaterBool = false;
 };
 
 #endif // MODEL_H
