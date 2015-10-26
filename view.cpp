@@ -41,9 +41,10 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getGold()->at(i)->accept(pVisitor);
     }
 
-    if(!control->getModel()->getDarkEater()->isDead()){
+    if(control->getModel()->getDarkEaterBool()){
         QRect srcRect = QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height());
         painter.drawPixmap(control->getModel()->getDarkEater()->getRect(), control->getModel()->getDarkEater()->getMoveLSprite(), srcRect);
+
     }
 
     if(control->getModel()->getMario()->getIsLittle()){
@@ -67,7 +68,6 @@ void View::paintEvent(QPaintEvent *)
         painter.drawImage(control->getModel()->getHeader()->getHeart().size().height() * i, 0, control->getModel()->getHeader()->getHeart());
 
 
-
     // Paint SplashScreen
     if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
         control->setOpacity(control->getOpacity() - 0.004);
@@ -86,6 +86,13 @@ void View::paintEvent(QPaintEvent *)
     }
     else
         control->setOpacity(1);
+
+    // Paint Blood when hurted
+    if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){
+        control->getModel()->getBlood()->accept(pVisitor);
+        //painter.setFont(QFont("Tahoma", 20, -1, false));
+        //painter.drawText(control->getModel()->getMario()->getRect().topLeft(), "Ouch!");
+    }
 
 }
 

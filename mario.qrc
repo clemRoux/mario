@@ -25,5 +25,7 @@
         <file>images/gold_big2.png</file>
         <file>images/gold_big3.png</file>
         <file>images/gold_sprites.png</file>
+        <file>images/blood.png</file>
+        <file>images/dark_eater_die.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@ class Background : public Brick
 public:
     Background(int, int);
     ~Background();
+    void moveBrick();
 
 
 };

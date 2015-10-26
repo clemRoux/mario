@@ -14,6 +14,7 @@
 #include "gameboard.h"
 #include "darkeater.h"
 #include "mushroom.h"
+#include "blood.h"
 
 class GameBoard;
 

@@ -19,6 +19,7 @@ class Floor;
 class Mario;
 class Brick;
 class Gold;
+class Blood;
 
 class Model
 {
@@ -37,6 +38,7 @@ public:
     inline QList<Mushroom*> *getMushroom(){ return mushroom; }
     inline QList<Gold*> *getGold(){ return golds; }
     inline DarkEater *getDarkEater(){ return darkEater; }
+    inline Blood *getBlood(){ return blood; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
@@ -58,6 +60,7 @@ private:
     Mario *mario;
     SplashScreen *splashScreen;
     Header *header;
+    Blood *blood;
 
     QList<int> ligne1;
     QList<int> ligne2;

@@ -29,9 +29,9 @@ class Brick
 
   private:
     QImage image;
-    QRect rect;
     bool destroyed;
 protected:
+    QRect rect;
     QPixmap sprite;
     QRect srcRect;
 

@@ -70,6 +70,7 @@ private:
     int temp = 0;
     qreal opacity = 1;
     bool isLittle;
+    int showBloodCount = 0;
 
 signals:
     void sendPaintIt();

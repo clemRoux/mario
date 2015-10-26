@@ -5,6 +5,7 @@
 #include <safe.h>
 #include <floor.h>
 #include "darkeater.h"
+#include "blood.h"
 #include <splashscreen.h>
 #include <header.h>
 #include <QDebug>
@@ -21,6 +22,7 @@ Model::Model()
     this->header = new Header();
     this->compteur = new QList<Brick*> ;
     this->mario = new Mario(200,340);
+    this->blood = new Blood(0,0);
 
     QFile fichier(":ModelMap.txt");
 

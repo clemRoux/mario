@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     gold.cpp \
     darkeater.cpp \
     view.cpp \
-    paintvisitor.cpp
+    paintvisitor.cpp \
+    blood.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -47,6 +48,7 @@ HEADERS  += gameboard.h \
     gold.h \
     darkeater.h \
     view.h \
-    paintvisitor.h
+    paintvisitor.h \
+    blood.h
 
 DISTFILES +=

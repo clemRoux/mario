@@ -11,3 +11,8 @@ Background::~Background()
 {
     std::cout << ("Background deleted\n");
 }
+
+void Background::moveBrick()
+{
+    rect.moveTo(rect.left() - Brick::speed/2, rect.top());
+}
