@@ -79,10 +79,10 @@ Model::Model()
     }
 
     for (int i=0; i<NbrBrickVisible+1; i++) {
-        for(int j=1; j<=2;j++){
-            Floor *k= new Floor(i*brickSize, Hauteur-j*brickSize, QString(":images/floor_bottom.jpg"));
+            Floor *k= new Floor(i*brickSize, Hauteur-brickSize, QString(":images/floor_bottom.jpg"));
             floors->append(k);
-        }
+            Floor *k2= new Floor(i*brickSize, Hauteur-2*brickSize, QString(":images/floor_grass.png"));
+            floors->append(k2);
     }
     for (int i=0; i<NbrBrickVisible+1; i++) {
         Brick *b=new Brick(i*brickSize,Hauteur+brickSize);
