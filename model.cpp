@@ -80,7 +80,7 @@ Model::Model()
 
     for (int i=0; i<NbrBrickVisible+1; i++) {
         for(int j=1; j<=2;j++){
-            Floor *k= new Floor(i*brickSize,Hauteur-j*brickSize);
+            Floor *k= new Floor(i*brickSize, Hauteur-j*brickSize, QString(":images/floor_bottom.jpg"));
             floors->append(k);
         }
     }
@@ -122,7 +122,22 @@ void Model::createBrick(QList<int> l ,int num ){
     case 0:
         break;
     case 1:{
-        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize, QString(":images/floor_bottom.jpg"));
+        floors->append(k);
+        break;
+    }
+    case 7:{
+        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_grass.png"));
+        floors->append(k);
+        break;
+    }
+    case 8:{
+        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_right.png"));
+        floors->append(k);
+        break;
+    }
+    case 9:{
+        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
         floors->append(k);
         break;
     }

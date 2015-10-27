@@ -277,7 +277,7 @@ void GameBoard::intersectFlameMario()
 void GameBoard::intersectDarkEaterMario()
 {
     if(model->getDarkEaterBool()){
-        if((model->getMario()->intersectLeft(model->getDarkEater()->getRect())
+        if((model->getMario()->intersectRight(model->getDarkEater()->getRect())
                 || model->getMario()->intersectTop(model->getDarkEater()->getRect()))
                 && !model->getMario()->getUntouchable()
                 && !model->getDarkEater()->isDead())
@@ -300,7 +300,8 @@ void GameBoard::intersectMushroomMario()
         if(model->getMario()->intersect(model->getMushroom()->at(i)->getRect())){
             model->getMushroom()->at(i)->setDestroyed(true);
             model->getMario()->setIsLittle(true);
-            Brick::speed = 2;
+            model->getMario()->setLife(model->getMario()->getLife() + 1);
+            Brick::speed = 6;
         }
     }
 }
