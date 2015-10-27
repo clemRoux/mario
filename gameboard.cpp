@@ -394,12 +394,12 @@ void GameBoard::movementMushroom(){
         if(model->getMushroom()->at(i)->getMoveCount()>0){
             model->getMushroom()->at(i)->setmoveCount(model->getMushroom()->at(i)->getMoveCount() - 1);
             if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
-                model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - 2, model->getMushroom()->at(i)->getRect().y() - 1);
+                model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - Brick::speed, model->getMushroom()->at(i)->getRect().y() - 1);
             else
                 model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x(), model->getMushroom()->at(i)->getRect().y() - 1);
         }
         else if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
-            model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - 2, model->getMushroom()->at(i)->getRect().y());
+            model->getMushroom()->at(i)->move(model->getMushroom()->at(i)->getRect().x() - Brick::speed, model->getMushroom()->at(i)->getRect().y());
         }
     }
 }

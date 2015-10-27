@@ -27,7 +27,7 @@ class Model
 public:
     Model();
     ~Model();
-    void createBrick(QList<int> , int );
+    void createBrick(QList<int> ,int ,int );
     void brickOrganisation();
     inline Mario *getMario(){ return mario; }
     SplashScreen *getSplashScreen(){ return splashScreen; }

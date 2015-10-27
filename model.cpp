@@ -78,13 +78,13 @@ Model::Model()
         fichier.close();
     }
 
-    for (int i=0; i<NbrBrickVisible+1; i++) {
-            Floor *k= new Floor(i*brickSize, Hauteur-brickSize, QString(":images/floor_bottom.jpg"));
-            floors->append(k);
-            Floor *k2= new Floor(i*brickSize, Hauteur-2*brickSize, QString(":images/floor_grass.png"));
-            floors->append(k2);
+    for (int i=0; i<NbrBrickVisible; i++) {
+        Floor *k= new Floor(i*brickSize, Hauteur-brickSize, QString(":images/floor_bottom.jpg"));
+        floors->append(k);
+        Floor *k2= new Floor(i*brickSize, Hauteur-2*brickSize, QString(":images/floor_grass.png"));
+        floors->append(k2);
     }
-    for (int i=0; i<NbrBrickVisible+1; i++) {
+    for (int i=0; i<NbrBrickVisible; i++) {
         Brick *b=new Brick(i*brickSize,Hauteur+brickSize);
         compteur->append(b);
     }
@@ -117,52 +117,52 @@ Model::~Model()
 
 //-----------------------------------------------------------------------------------------------------------------//
 
-void Model::createBrick(QList<int> l ,int num ){
+void Model::createBrick(QList<int> l ,int num ,int x){
     switch (l.at( mapPosition)) {
     case 0:
         break;
     case 1:{
-        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize, QString(":images/floor_bottom.jpg"));
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize, QString(":images/floor_bottom.jpg"));
         floors->append(k);
         break;
     }
     case 7:{
-        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_grass.png"));
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_grass.png"));
         floors->append(k);
         break;
     }
     case 8:{
-        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_right.png"));
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_right.png"));
         floors->append(k);
         break;
     }
     case 9:{
-        Floor *k= new Floor(NbrBrickVisible*brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
         floors->append(k);
         break;
     }
     case 2:{
-        Safe* t= new Safe(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        Safe* t= new Safe(x+brickSize, Hauteur-num*brickSize);
         safes->append(t);
         break;
     }
     case 3:{
-        Gold* g= new Gold(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        Gold* g= new Gold(x+brickSize, Hauteur-num*brickSize);
         golds->append(g);
         break;
     }
     case 4:{
-        this->darkEater = new DarkEater(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        this->darkEater = new DarkEater(x+brickSize, Hauteur-num*brickSize);
         this->darkEaterBool = true;
         break;
     }
     case 5:{
-        Flame* f = new Flame(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        Flame* f = new Flame(x+brickSize, Hauteur-num*brickSize);
         flames->append(f);
         break;
     }
     case 6:{
-        Safe* t= new Safe(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        Safe* t= new Safe(x+brickSize, Hauteur-num*brickSize);
         t->setCapacity(2);
         safes->append(t);
         break;
@@ -179,22 +179,21 @@ void Model::brickOrganisation()
             background->removeAt(i);
             Background* b = new Background(1000,0);
             background->append(b);
-            qDebug() << "create Background:";
         }
     }
+    if(compteur->last()->getRect().x()<((NbrBrickVisible)*brickSize)){
+        Brick *b=new Brick(compteur->last()->getRect().x()+brickSize,Hauteur+brickSize);
+        createBrick(ligne1,1,compteur->last()->getRect().x());
+        createBrick(ligne2,2,compteur->last()->getRect().x());
+        createBrick(ligne3,3,compteur->last()->getRect().x());
+        createBrick(ligne4,4,compteur->last()->getRect().x());
+        createBrick(ligne5,5,compteur->last()->getRect().x());
+        compteur->append(b);
+        mapPosition++;
+    }
 
-    for(int i = 0; i<compteur->size(); i++){
-        if (compteur->at(i)->getRect().x()<=-brickSize){
-            compteur->removeAt(i);
-            Brick *b=new Brick(compteur->at(i)->getRect().x()+(NbrBrickVisible)*brickSize,Hauteur+brickSize);
-            compteur->append(b);
-            createBrick(ligne1,1);
-            createBrick(ligne2,2);
-            createBrick(ligne3,3);
-            createBrick(ligne4,4);
-            createBrick(ligne5,5);
-            mapPosition++;
-        }
+    if (compteur->first()->getRect().x()<=-brickSize){
+        compteur->removeAt(compteur->indexOf(compteur->first()));
     }
 
     for(int i = 0; i<floors->size(); i++){

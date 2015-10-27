@@ -13,7 +13,7 @@ class Person
   public:
     Person(int, int);
     ~Person();
-    bool isDead();
+    bool isDead(){return dead;}
     inline void setDead(bool destr){ dead = destr; }
     inline QRect getRect(){ return rect; }
     inline void setSrcRect(QRect srcRect){ this->srcRect = srcRect; }
@@ -46,7 +46,7 @@ class Person
     inline int getCurrentFrame(){ return currentFrame; }
     inline void setCurrentFrame(int frame){ this->currentFrame = frame; }
 
-protected:
+ protected:
     QPixmap moveRSprite;
     QPixmap moveLSprite;
     QPixmap stopSprite;
@@ -59,7 +59,7 @@ protected:
     bool isJumping;
     bool dead;
     int currentFrame = 0;
-   private:
+ private:
     bool unTouchable = false;
     int life = 5;
     int invicible = 0;

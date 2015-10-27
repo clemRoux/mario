@@ -17,10 +17,6 @@ Person::~Person()
     std::cout << ("Person deleted\n");
 }
 
-bool Person::isDead()
-{
-    return dead;
-}
 
 void Person::move(int x ,int y)
 {
