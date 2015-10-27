@@ -8,6 +8,7 @@
 #include "blood.h"
 #include <splashscreen.h>
 #include <header.h>
+#include "flame.h"
 #include <QDebug>
 
 Model::Model()
@@ -17,6 +18,7 @@ Model::Model()
     this->safes = new QList<Safe*>;
     this->mushroom = new QList<Mushroom *>;
     this->golds = new QList<Gold *>;
+    this->flames = new QList<Flame *>;
     this->splashScreen = new SplashScreen(300, 100);
     this->background = new QList<Background *>;
     this->header = new Header();
@@ -106,6 +108,7 @@ Model::~Model()
     delete background;
     mushroom->clear();
     delete mushroom;
+    delete flames;
     golds->clear();
     delete golds;
     delete mario;
@@ -114,8 +117,7 @@ Model::~Model()
 
 //-----------------------------------------------------------------------------------------------------------------//
 
-void Model::createBrick(QList<int> l ,int num )
-{
+void Model::createBrick(QList<int> l ,int num ){
     switch (l.at( mapPosition)) {
     case 0:
         break;
@@ -125,22 +127,27 @@ void Model::createBrick(QList<int> l ,int num )
         break;
     }
     case 2:{
-        Safe* t= new Safe(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        Safe* t= new Safe(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
         safes->append(t);
         break;
     }
     case 3:{
-        Gold* g= new Gold(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        Gold* g= new Gold(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
         golds->append(g);
         break;
     }
     case 4:{
-        this->darkEater = new DarkEater(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        this->darkEater = new DarkEater(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
         this->darkEaterBool = true;
         break;
     }
+    case 5:{
+        Flame* f = new Flame(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
+        flames->append(f);
+        break;
+    }
     case 6:{
-        Safe* t= new Safe(NbrBrickVisible*brickSize,Hauteur-num*brickSize);
+        Safe* t= new Safe(NbrBrickVisible*brickSize, Hauteur-num*brickSize);
         t->setCapacity(2);
         safes->append(t);
         break;
@@ -196,6 +203,12 @@ void Model::brickOrganisation()
     for(int i = 0; i<mushroom->size(); i++){
         if (mushroom->at(i)->getRect().x()<=-brickSize || mushroom->at(i)->isDestroyed()){
             mushroom->removeAt(i);
+        }
+    }
+
+    for(int i = 0; i<flames->size(); i++){
+        if (flames->at(i)->getRect().x()<=-brickSize || flames->at(i)->isDestroyed()){
+            flames->removeAt(i);
         }
     }
 }

@@ -13,6 +13,7 @@
 #include "background.h"
 #include "mushroom.h"
 #include "darkeater.h"
+#include "flame.h"
 
 class Safe;
 class Floor;
@@ -37,6 +38,7 @@ public:
     inline QList<Background*> *getBackground(){ return background; }
     inline QList<Mushroom*> *getMushroom(){ return mushroom; }
     inline QList<Gold*> *getGold(){ return golds; }
+    inline QList<Flame*> *getFlame(){ return flames; }
     inline DarkEater *getDarkEater(){ return darkEater; }
     inline Blood *getBlood(){ return blood; }
     inline int getSpeed(){ return speed; }
@@ -56,6 +58,7 @@ private:
     QList<Brick*> *compteur;
     QList<Background*> *background;
     QList<Gold*> *golds;
+    QList<Flame*> *flames;
     DarkEater *darkEater;
     Mario *mario;
     SplashScreen *splashScreen;
@@ -70,7 +73,7 @@ private:
     int backgroundCount=0;
     int mapPosition=0;
     int speed = 4;
-    bool darkEaterBool = false;
+    bool darkEaterBool;
 };
 
 #endif // MODEL_H

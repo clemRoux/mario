@@ -14,7 +14,7 @@ class Person
     Person(int, int);
     ~Person();
     bool isDead();
-    inline void setDead(bool);
+    inline void setDead(bool destr){ dead = destr; }
     inline QRect getRect(){ return rect; }
     inline void setSrcRect(QRect srcRect){ this->srcRect = srcRect; }
     inline QRect getSrcRect(){ return srcRect; }
@@ -37,10 +37,14 @@ class Person
     void moveDie(int ,int );
     inline int getLife(){ return life; }
     inline void setLife(int life){ this->life = life; }
+    inline int getInvicible(){ return invicible; }
+    inline void setInvicible(int invicible){ this->invicible = invicible; }
     bool intersect(QRect );
     void accept(PaintVisitor *p){ p->visitPixmap(this); }
     void setUntouchable(bool touch){ this->unTouchable = touch; }
     bool getUntouchable(){ return this->unTouchable; }
+    inline int getCurrentFrame(){ return currentFrame; }
+    inline void setCurrentFrame(int frame){ this->currentFrame = frame; }
 
 protected:
     QPixmap moveRSprite;
@@ -53,10 +57,12 @@ protected:
     bool isMovingR;
     bool isMovingL;
     bool isJumping;
-   private:
     bool dead;
+    int currentFrame = 0;
+   private:
     bool unTouchable = false;
     int life = 5;
+    int invicible = 0;
 
 };
 

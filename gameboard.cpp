@@ -23,6 +23,7 @@ GameBoard::GameBoard(Model *m, View *v) : QObject()
 }
 
 int Gold::currentFrame = 0;
+int Flame::currentFrame = 0;
 int Brick::speed = 5;
 
 //----------------------------------------------------------------------------------------------------------------//
@@ -49,6 +50,7 @@ void GameBoard::timerEvent(QTimerEvent *event)
     movementDarkEater();
     model->brickOrganisation();
     goldAnim();
+    flameAnim();
     hurted();
     emit sendPaintIt();
 }
@@ -97,20 +99,24 @@ void GameBoard::movementMario()
     intersectGoldMario();
     intersectMushroomMario();
     intersectDarkEaterMario();
+    intersectFlameMario();
 }
 
 void GameBoard::movementDarkEater()
 {
     if(model->getDarkEaterBool()){
-        model->getDarkEater()->move(model->getDarkEater()->getRect().x() - 2, model->getDarkEater()->getRect().y());
-        if(darkEaterTempo == 10){
-            model->getDarkEater()->setCurrentFrame(model->getDarkEater()->getCurrentFrame() + 104);
-            if (model->getDarkEater()->getCurrentFrame() >= 312 )
-                model->getDarkEater()->setCurrentFrame(1);
-            darkEaterTempo = 0;
+        if(model->getDarkEater()->getIsMovingL()){
+            model->getDarkEater()->move(model->getDarkEater()->getRect().x() - 2, model->getDarkEater()->getRect().y());
+            if(darkEaterTempo == 15){
+                model->getDarkEater()->setCurrentFrame(model->getDarkEater()->getCurrentFrame() + 104);
+                if (model->getDarkEater()->getCurrentFrame() >= 312 )
+                    model->getDarkEater()->setCurrentFrame(1);
+                darkEaterTempo = 0;
+            }
+            else{
+                darkEaterTempo++;
+            }
         }
-        else
-            darkEaterTempo++;
     }
 }
 //----------------------------------------------------------------------------------------------------------------//
@@ -118,7 +124,7 @@ void GameBoard::movementDarkEater()
 void GameBoard::moveXMario(int y)
 {
     int x=model->getMario()->getRect().x();
-    if(getIsMovingL() && model->getMario()->getRect().x()>=2 && !intersectLeftMario() )
+    if(getIsMovingL() && model->getMario()->getRect().x()>=2 && !intersectLeftMario())
         x -= Brick::speed;
     else if(getIsMovingR() && model->getMario()->getRect().x()<=350  && !intersectRightMario())
         x += Brick::speed;
@@ -159,6 +165,11 @@ void GameBoard::movementMap()
     for(int i = 0; i<model->getGold()->size(); i++){
         model->getGold()->at(i)->moveBrick();
     }
+
+    for(int i = 0; i<model->getFlame()->size(); i++){
+        model->getFlame()->at(i)->moveBrick();
+    }
+
     if(model->getDarkEaterBool())
         model->getDarkEater()->move(model->getDarkEater()->getRect().x() - Brick::speed, model->getDarkEater()->getRect().y());
 
@@ -200,6 +211,10 @@ bool GameBoard::intersectBottomMario()
         if(model->getMario()->intersectBottom(model->getSafes()->at(i)->getRect()))
             return true;
     }
+    if(model->getDarkEaterBool()){
+        if(model->getMario()->intersectBottom(model->getDarkEater()->getRect()))
+            return true;
+    }
     return false;
 }
 
@@ -211,6 +226,11 @@ bool GameBoard::intersectLeftMario()
     }
     for(int i = 0; i<model->getSafes()->size(); i++){
         if(model->getMario()->intersectLeft(model->getSafes()->at(i)->getRect()))
+            return true;
+    }
+
+    if(model->getDarkEaterBool()){
+        if(model->getMario()->intersectLeft(model->getDarkEater()->getRect()))
             return true;
     }
     return false;
@@ -227,6 +247,11 @@ bool GameBoard::intersectRightMario()
         if(model->getMario()->intersectRight(model->getSafes()->at(i)->getRect()))
             return true;
     }
+    if(model->getDarkEaterBool()){
+        if(model->getMario()->intersectRight(model->getDarkEater()->getRect()))
+            return true;
+    }
+
     return false;
 }
 
@@ -240,23 +265,34 @@ void GameBoard::intersectGoldMario()
     }
 }
 
-void GameBoard::intersectDarkEaterMario()
+void GameBoard::intersectFlameMario()
 {
-    if(model->getDarkEaterBool()){
-        if((model->getMario()->intersectRight(model->getDarkEater()->getRect())
-            || model->getMario()->intersectLeft(model->getDarkEater()->getRect()) )
-            || model->getMario()->intersectTop(model->getDarkEater()->getRect())
-            && !model->getMario()->getUntouchable())
-        {
+    for(int i = 0; i<model->getFlame()->size(); i++){
+        if(model->getMario()->intersect(model->getFlame()->at(i)->getRect())){
             this->model->getMario()->setIsHurted(true);
-        }
-        else if(model->getMario()->intersectBottom(model->getDarkEater()->getRect())){
-            //model->setDarkEaterBool(false);
-            //model->getDarkEater()->setIsMovingL(false);
         }
     }
 }
 
+void GameBoard::intersectDarkEaterMario()
+{
+    if(model->getDarkEaterBool()){
+        if((model->getMario()->intersectLeft(model->getDarkEater()->getRect())
+                || model->getMario()->intersectTop(model->getDarkEater()->getRect()))
+                && !model->getMario()->getUntouchable()
+                && !model->getDarkEater()->isDead())
+        {
+            this->model->getMario()->setIsHurted(true);
+        }
+         else if(model->getMario()->intersectBottom(model->getDarkEater()->getRect())){
+            model->getDarkEater()->setIsMovingL(false);
+            getModel()->getMario()->setIsHurted(false);
+            getModel()->getMario()->setUntouchable(false);
+            getModel()->getBlood()->setStopBlood(false);
+            getModel()->getDarkEater()->setDead(true);
+        }
+    }
+}
 
 void GameBoard::intersectMushroomMario()
 {
@@ -284,17 +320,28 @@ void GameBoard::splashScreen(){
 //-----------------------------------------------------------------------------------------------------------------------//
 
 
-
 void GameBoard::goldAnim(){
-    if(temp == 20){
+    if(tempGold == 20){
         Gold::currentFrame += 40;
         if (Gold::currentFrame >= 120)
             Gold::currentFrame = 0;
-        temp = 0;
+        tempGold = 0;
     }
     else
-        temp++;
+        tempGold++;
 }
+
+void GameBoard::flameAnim(){
+    if(tempFlame == 10){
+        Flame::currentFrame += 58;
+        if (Flame::currentFrame >= 520)
+            Flame::currentFrame = 3;
+        tempFlame = 0;
+    }
+    else
+        tempFlame++;
+}
+
 
 void GameBoard::hurted(){
     if(model->getMario()->getIsHurted()){
@@ -308,24 +355,36 @@ void GameBoard::hurted(){
             showBloodCount++;
         }
 
-        this->getModel()->getBlood()->move(model->getMario()->getRect().x() - 250, this->getModel()->getBlood()->getRect().y());
-        if(opacity == 1){
-            model->getMario()->setDieRect(QRect(model->getMario()->getRect().topLeft(), model->getMario()->getRect().bottomRight()));
+        this->getModel()->getBlood()->move(model->getMario()->getRect().x() - 250, model->getMario()->getRect().x() - 350);
+        if(getModel()->getMario()->getInvicible() == 0){
+            //model->getMario()->setDieRect(QRect(model->getMario()->getRect().topLeft(), model->getMario()->getRect().bottomRight()));
             model->getMario()->setLife(model->getMario()->getLife() - 1);
         }
-
-        if(model->getMario()->getDieRect().bottom() > model->getMario()->getRect().top() - 200){
-            int x=model->getMario()->getDieRect().x();
-            int y=model->getMario()->getDieRect().y();
-            y = y - 3;
-            model->getMario()->moveDie(x, y);
-        }
-        else {
+        if(getModel()->getMario()->getInvicible() > 100){
             getModel()->getMario()->setUntouchable(false);
             getModel()->getMario()->setIsHurted(false);
             getModel()->getBlood()->setStopBlood(false);
+            getModel()->getMario()->setInvicible(0);
+        }
+        else{
+            getModel()->getMario()->setInvicible(getModel()->getMario()->getInvicible() + 1);
         }
 
+
+    }
+}
+
+void GameBoard::fantom(){
+    if(model->getMario()->getDieRect().bottom() > model->getMario()->getRect().top() - 200){
+        int x=model->getMario()->getDieRect().x();
+        int y=model->getMario()->getDieRect().y();
+        y = y - 3;
+        model->getMario()->moveDie(x, y);
+    }
+    else {
+        getModel()->getMario()->setUntouchable(false);
+        getModel()->getMario()->setIsHurted(false);
+        getModel()->getBlood()->setStopBlood(false);
     }
 }
 

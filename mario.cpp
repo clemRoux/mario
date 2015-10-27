@@ -10,7 +10,6 @@ Mario::Mario(int x, int y ) : Person(x,y)
     this->goldNumber = 0;
     this->rect = QRect(x, y, 45, moveRSprite.height() - 7);
     this->dieRect = QRect(x, y, 50, stopSprite.height()-7);
-
 }
 
 Mario::~Mario()
@@ -27,7 +26,7 @@ bool Mario::intersectTop(QRect r)
             return true;
         }
     }
-    else return false;
+    return false;
 }
 
 bool Mario::intersectBottom(QRect r)
@@ -38,7 +37,7 @@ bool Mario::intersectBottom(QRect r)
             return true;
         }
     }
-    else return false;
+    return false;
 }
 
 bool Mario::intersectRight(QRect r)
@@ -47,7 +46,7 @@ bool Mario::intersectRight(QRect r)
         if(getRect().x() < r.x())
             return true;
     }
-    else return false;
+    return false;
 }
 
 bool Mario::intersectLeft(QRect r)
@@ -56,6 +55,6 @@ bool Mario::intersectLeft(QRect r)
         if(getRect().x() > r.x())
             return true;
     }
-    else return false;
+    return false;
 }
 

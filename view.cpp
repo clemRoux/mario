@@ -41,9 +41,16 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getGold()->at(i)->accept(pVisitor);
     }
 
+    for(int i = 0; i<control->getModel()->getFlame()->size(); i++){
+        control->getModel()->getFlame()->at(i)->setSrcRect(QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
+        control->getModel()->getFlame()->at(i)->accept(pVisitor);
+        painter.drawPixmap(control->getModel()->getFlame()->at(i)->getRect(), control->getModel()->getFlame()->at(i)->getSprite(), QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
+
+    }
+
     if(control->getModel()->getDarkEaterBool()){
-        QRect srcRect = QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height());
-        painter.drawPixmap(control->getModel()->getDarkEater()->getRect(), control->getModel()->getDarkEater()->getMoveLSprite(), srcRect);
+        control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
+        control->getModel()->getDarkEater()->accept(pVisitor);
 
     }
 
@@ -64,21 +71,39 @@ void View::paintEvent(QPaintEvent *)
     QString goldText = "x" + QString::number(control->getModel()->getMario()->getGoldNumber());
     painter.drawText(control->getModel()->getHeader()->getGoldPosition(), goldText);
 
-    for(int i = 0 ; i < control->getModel()->getMario()->getLife() ; i++)
+
+    painter.save();
+    if(control->getModel()->getMario()->getUntouchable())
+        painter.setOpacity(0.4);
+    else
+        painter.setOpacity(1);
+
+    for(int i = 0 ; i < control->getModel()->getMario()->getLife() ; i++){
         painter.drawImage(control->getModel()->getHeader()->getHeart().size().height() * i, 0, control->getModel()->getHeader()->getHeart());
+    }
+    painter.restore();
 
 
     // Paint SplashScreen
+    painter.save();
     if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
-        control->setOpacity(control->getOpacity() - 0.004);
+        control->setOpacity(control->getOpacity() - 0.005);
         painter.setOpacity(control->getOpacity());
         control->getModel()->getSplashScreen()->accept(pVisitor);
     }
-    else{
-        painter.setOpacity(control->getOpacity());
+    else {
+        control->setOpacity(1);
+    }
+    painter.restore();
+
+
+    if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){ // Paint Blood when hurted
+        control->getModel()->getBlood()->accept(pVisitor);
     }
 
+
     // Paint Mario's fantom when loosing a life
+    /*
     if(control->getModel()->getMario()->getIsHurted()){
         control->setOpacity(control->getOpacity() - 0.005);
         painter.setOpacity(control->getOpacity());
@@ -86,13 +111,10 @@ void View::paintEvent(QPaintEvent *)
     }
     else
         control->setOpacity(1);
+    */
 
-    // Paint Blood when hurted
-    if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){
-        control->getModel()->getBlood()->accept(pVisitor);
-        //painter.setFont(QFont("Tahoma", 20, -1, false));
-        //painter.drawText(control->getModel()->getMario()->getRect().topLeft(), "Ouch!");
-    }
+
+
 
 }
 

@@ -22,11 +22,6 @@ bool Person::isDead()
     return dead;
 }
 
-void Person::setDead(bool destr)
-{
-    dead = destr;
-}
-
 void Person::move(int x ,int y)
 {
     rect.moveTo(x, y);

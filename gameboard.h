@@ -37,8 +37,11 @@ public:
     void intersectGoldMario();
     void intersectMushroomMario();
     void intersectDarkEaterMario();
+    void intersectFlameMario();
     void goldAnim();
+    void flameAnim();
     void movementDarkEater();
+    void fantom();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
     inline bool getIsMovingL(){ return getModel()->getMario()->getIsMovingL(); }
     inline bool getIsJumping(){ return getModel()->getMario()->getIsJumping(); }
@@ -67,7 +70,8 @@ private:
     int tempMove = 0;
     int marioSize;
     int darkEaterTempo = 0;
-    int temp = 0;
+    int tempGold = 0;
+    int tempFlame = 0;
     qreal opacity = 1;
     bool isLittle;
     int showBloodCount = 0;
