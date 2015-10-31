@@ -172,6 +172,10 @@ void GameBoard::movementMap()
         model->getFlame()->at(i)->moveBrick();
     }
 
+    for(int i = 0; i<model->getMysticTrees()->size(); i++){
+        model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x() - Brick::speed, model->getMysticTrees()->at(i)->getRect().y());
+    }
+
     if(model->getDarkEaterBool())
         model->getDarkEater()->move(model->getDarkEater()->getRect().x() - Brick::speed, model->getDarkEater()->getRect().y());
 
@@ -213,6 +217,12 @@ bool GameBoard::intersectBottomMario()
         if(model->getMario()->intersectBottom(model->getSafes()->at(i)->getRect()))
             return true;
     }
+
+    for(int i = 0; i<model->getMysticTrees()->size(); i++){
+        if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect()))
+            return true;
+    }
+
     if(model->getDarkEaterBool()){
         if(model->getMario()->intersectBottom(model->getDarkEater()->getRect()))
             return true;
@@ -228,6 +238,11 @@ bool GameBoard::intersectLeftMario()
     }
     for(int i = 0; i<model->getSafes()->size(); i++){
         if(model->getMario()->intersectLeft(model->getSafes()->at(i)->getRect()))
+            return true;
+    }
+
+    for(int i = 0; i<model->getMysticTrees()->size(); i++){
+        if(model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
             return true;
     }
 
@@ -249,6 +264,12 @@ bool GameBoard::intersectRightMario()
         if(model->getMario()->intersectRight(model->getSafes()->at(i)->getRect()))
             return true;
     }
+
+    for(int i = 0; i<model->getMysticTrees()->size(); i++){
+        if(model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect()))
+            return true;
+    }
+
     if(model->getDarkEaterBool()){
         if(model->getMario()->intersectRight(model->getDarkEater()->getRect()))
             return true;
@@ -279,19 +300,16 @@ void GameBoard::intersectFlameMario()
 void GameBoard::intersectDarkEaterMario()
 {
     if(model->getDarkEaterBool()){
-        if((model->getMario()->intersectRight(model->getDarkEater()->getRect())
-            || model->getMario()->intersectTop(model->getDarkEater()->getRect()))
+        if(model->getMario()->intersectBottom(model->getDarkEater()->getRect()) && !getModel()->getDarkEater()->isDead()){
+            model->getDarkEater()->setIsMovingL(false);
+            getModel()->getDarkEater()->setDead(true);
+        }
+        else if((model->getMario()->intersectRight(model->getDarkEater()->getRect())
+                 || model->getMario()->intersectTop(model->getDarkEater()->getRect()))
                 && !model->getMario()->getUntouchable()
                 && !model->getDarkEater()->isDead())
         {
             this->model->getMario()->setIsHurted(true);
-        }
-        else if(model->getMario()->intersectBottom(model->getDarkEater()->getRect())){
-            model->getDarkEater()->setIsMovingL(false);
-            getModel()->getMario()->setIsHurted(false);
-            getModel()->getMario()->setUntouchable(false);
-            getModel()->getBlood()->setStopBlood(false);
-            getModel()->getDarkEater()->setDead(true);
         }
     }
 }
@@ -311,20 +329,16 @@ void GameBoard::intersectMushroomMario()
 void GameBoard::intersectMysticTreeMario()
 {
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
-        if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect())
-            || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
+        if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect()) && !getModel()->getMysticTrees()->at(i)->isDead()){
+            getModel()->getMysticTrees()->at(i)->setDead(true);
+            model->getMysticTrees()->at(i)->setIsMovingL(false);
+        }
+        else if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect()))
+                // || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
                 && !model->getMario()->getUntouchable()
                 && !model->getMysticTrees()->at(i)->isDead())
         {
             this->model->getMario()->setIsHurted(true);
-            model->getMysticTrees()->at(i)->setIsMovingL(false);
-           qDebug() << "WTF§?";
-        }
-        else if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect())){
-            getModel()->getMario()->setIsHurted(false);
-            getModel()->getMario()->setUntouchable(false);
-            getModel()->getBlood()->setStopBlood(false);
-            getModel()->getMysticTrees()->at(i)->setDead(true);
         }
     }
 }
@@ -430,22 +444,19 @@ void GameBoard::movementMushroom(){
 
 void GameBoard::movementMysticTree(){
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
-        if(model->getMysticTrees()->at(i)->getMoveCount() > 0){
-            model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
-            if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
-                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x() - Brick::speed, model->getMysticTrees()->at(i)->getRect().y() - 1);
-            else
+        if(model->getMysticTrees()->at(i)->getIsMovingL()){
+            if(model->getMysticTrees()->at(i)->getMoveCount() > 0){
+                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
                 model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() - 1);
-        }
-        else if(model->getMysticTrees()->at(i)->getMoveCount() > - 120){
-            model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
-            if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
-                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x() - Brick::speed, model->getMysticTrees()->at(i)->getRect().y() + 1);
-            else
+            }
+            else if(model->getMysticTrees()->at(i)->getMoveCount() > - 120){
+                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
                 model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() + 1);
+            }
+            else{
+                model->getMysticTrees()->at(i)->setmoveCount(120);
+            }
         }
-        else{
-            model->getMysticTrees()->at(i)->setmoveCount(120);
-        }
+
     }
 }
