@@ -23,6 +23,7 @@ Model::Model()
     this->background = new QList<Background *>;
     this->header = new Header();
     this->compteur = new QList<Brick*> ;
+    this->mysticTrees = new QList<MysticTree *>;
     this->mario = new Mario(200,340);
     this->blood = new Blood(0,0);
 
@@ -37,40 +38,40 @@ Model::Model()
             if (stock.left(6)=="LIGNEa")
             {
                 for(int i=0;i<stock.size();++i){
-                    if(stock.at(i).isDigit()){
-                        ligne1.append(stock.at(i).digitValue());
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne1.append(stock.at(i));
                     }
                 }
             }
             else if (stock.left(6)=="LIGNEb")
             {
                 for(int i=0;i<stock.size();++i){
-                    if(stock.at(i).isDigit()){
-                        ligne2.append(stock.at(i).digitValue());
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne2.append(stock.at(i));
                     }
                 }
             }
             else if (stock.left(6)=="LIGNEc")
             {
                 for(int i=0;i<stock.size();++i){
-                    if(stock.at(i).isDigit()){
-                        ligne3.append(stock.at(i).digitValue());
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne3.append(stock.at(i));
                     }
                 }
             }
             else if (stock.left(6)=="LIGNEd")
             {
                 for(int i=0;i<stock.size();++i){
-                    if(stock.at(i).isDigit()){
-                        ligne4.append(stock.at(i).digitValue());
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne4.append(stock.at(i));
                     }
                 }
             }
             else if (stock.left(6)=="LIGNEe")
             {
                 for(int i=0;i<stock.size();++i){
-                    if(stock.at(i).isDigit()){
-                        ligne5.append(stock.at(i).digitValue());
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne5.append(stock.at(i));
                     }
                 }
             }
@@ -89,7 +90,7 @@ Model::Model()
         compteur->append(b);
     }
     for (int i=0; i<2; i++) {
-        Background* b = new Background(i*1000, 0);
+        Background* b = new Background(i*Model::Longueur, 0);
         background->append(b);
     }
 }
@@ -113,60 +114,68 @@ Model::~Model()
     delete golds;
     delete mario;
     delete splashScreen;
+    mysticTrees->clear();
+    delete mysticTrees;
 }
 
 //-----------------------------------------------------------------------------------------------------------------//
 
-void Model::createBrick(QList<int> l ,int num ,int x){
-    switch (l.at( mapPosition)) {
-    case 0:
-        break;
-    case 1:{
+void Model::createBrick(QList<QChar> l ,int num ,int x){
+    QChar myChar = l.at(mapPosition);
+
+    if(myChar == '0')
+        return;
+    else if(myChar == '1'){
         Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize, QString(":images/floor_bottom.jpg"));
         floors->append(k);
-        break;
+        return;
     }
-    case 7:{
-        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_grass.png"));
-        floors->append(k);
-        break;
-    }
-    case 8:{
-        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_right.png"));
-        floors->append(k);
-        break;
-    }
-    case 9:{
-        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
-        floors->append(k);
-        break;
-    }
-    case 2:{
+    else if(myChar == '2'){
         Safe* t= new Safe(x+brickSize, Hauteur-num*brickSize);
         safes->append(t);
-        break;
+        return;
     }
-    case 3:{
+    else if(myChar == '3'){
         Gold* g= new Gold(x+brickSize, Hauteur-num*brickSize);
         golds->append(g);
-        break;
+        return;
     }
-    case 4:{
+    else if(myChar == '4'){
         this->darkEater = new DarkEater(x+brickSize, Hauteur-num*brickSize);
         this->darkEaterBool = true;
-        break;
+        return;
     }
-    case 5:{
+    else if(myChar == '5'){
         Flame* f = new Flame(x+brickSize, Hauteur-num*brickSize);
         flames->append(f);
-        break;
+        return;
     }
-    case 6:{
+    else if(myChar == '6'){
         Safe* t= new Safe(x+brickSize, Hauteur-num*brickSize);
         t->setCapacity(2);
         safes->append(t);
-        break;
+        return;
     }
+    else if(myChar == '7'){
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_grass.png"));
+        floors->append(k);
+        return;
+    }
+    else if(myChar == '8'){
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_right.png"));
+        floors->append(k);
+        return;
+    }
+    else if(myChar == '9'){
+        Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
+        floors->append(k);
+        return;
+    }
+    else if(myChar == 'a'){
+        MysticTree *k= new MysticTree(x+brickSize,Hauteur-num*brickSize);
+        mysticTrees->append(k);
+        qDebug() << "Je Debug";
+        return;
     }
 }
 

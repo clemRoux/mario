@@ -57,7 +57,7 @@ class Person
     bool isMovingR;
     bool isMovingL;
     bool isJumping;
-    bool dead;
+    bool dead = false;
     int currentFrame = 0;
  private:
     bool unTouchable = false;

@@ -10,19 +10,16 @@ void center(QWidget &widget)
     int screenWidth;
     int screenHeight;
 
-    int WIDTH = 1000;
-    int HEIGHT = 500;
-
     QDesktopWidget *desktop = QApplication::desktop();
 
     screenWidth = desktop->width();
     screenHeight = desktop->height();
 
-    x = (screenWidth - WIDTH) / 2;
-    y = (screenHeight - HEIGHT) / 2;
+    x = (screenWidth - Model::Longueur) / 2;
+    y = (screenHeight - Model::Hauteur) / 2;
 
-    widget.setGeometry(x, y, WIDTH, HEIGHT);
-    widget.setFixedSize(WIDTH, HEIGHT);
+    widget.setGeometry(x, y, Model::Longueur, Model::Hauteur);
+    widget.setFixedSize(Model::Longueur, Model::Hauteur);
 }
 
 

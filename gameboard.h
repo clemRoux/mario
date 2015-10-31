@@ -28,6 +28,7 @@ public:
     void movementMap();
     void movementBackground();
     void movementMushroom();
+    void movementMysticTree();
     void splashScreen();
     void hurted();
     bool intersectBottomMario();
@@ -38,6 +39,7 @@ public:
     void intersectMushroomMario();
     void intersectDarkEaterMario();
     void intersectFlameMario();
+    void intersectMysticTreeMario();
     void goldAnim();
     void flameAnim();
     void movementDarkEater();
