@@ -55,3 +55,27 @@ void Brick::move(int x ,int y)
 {
     rect.moveTo(x, y);
 }
+
+bool Brick::intersectBottom(QRect r)
+{
+    if(r.intersected(getRect()).width() > 5 && getRect().y() < r.y())
+    {
+        move(getRect().x(),r.y() - getRect().height() + 1);
+        return true;
+    }
+    return false;
+}
+
+bool Brick::intersectRight(QRect r)
+{
+    if(r.intersected(getRect()).height() > 5 && getRect().x() < r.x() )
+        return true;
+    return false;
+}
+
+bool Brick::intersectLeft(QRect r)
+{
+    if(r.intersected(getRect()).height() > 5 && getRect().x() > r.x())
+        return true;
+    return false;
+}

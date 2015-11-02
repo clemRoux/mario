@@ -158,6 +158,7 @@ void Model::createBrick(QList<int> l ,int num ,int x){
     }
     case 5:{
         Flame* f = new Flame(x+brickSize, Hauteur-num*brickSize);
+        f->setMoveX(false);
         flames->append(f);
         break;
     }

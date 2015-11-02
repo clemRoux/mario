@@ -28,6 +28,7 @@ public:
     void movementMap();
     void movementBackground();
     void movementMushroom();
+    void moveBrick(int ,Brick *);
     void splashScreen();
     void hurted();
     bool intersectBottomMario();
@@ -38,6 +39,9 @@ public:
     void intersectMushroomMario();
     void intersectDarkEaterMario();
     void intersectFlameMario();
+    bool intersectBottomBrick(Brick *);
+    bool intersectRightBrick(Brick *);
+    bool intersectLeftBrick(Brick *);
     void goldAnim();
     void flameAnim();
     void movementDarkEater();
@@ -52,8 +56,8 @@ public:
     inline Model *getModel(){ return this->model; }
     inline qreal getOpacity(){ return opacity; }
     inline void setOpacity(qreal opacity){this->opacity = opacity; }
-    inline int getStartJumpY(){ return startJumpY; }
-    inline void setStartJumpY(int startJumpY){this->startJumpY = startJumpY; }
+    inline int getXRelatif(){ return xRelatif; }
+    inline void setXRelatif(int x){this->xRelatif = x; }
     void timerEvent(QTimerEvent *event);
 
 

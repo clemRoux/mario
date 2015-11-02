@@ -19,42 +19,35 @@ Mario::~Mario()
 
 bool Mario::intersectTop(QRect r)
 {
-    if(r.intersected(getRect()).width() > 5 ){
-        if(getRect().y() > r.y()){
-            //qDebug() << getRect().y();
-            move(getRect().x(),r.y() + 50);
-            return true;
-        }
+    if(r.intersected(getRect()).width() > 7 && getRect().y() > r.y())
+    {
+        move(getRect().x(),r.y()+49);
+        return true;
     }
     return false;
 }
 
 bool Mario::intersectBottom(QRect r)
 {
-    if(r.intersected(getRect()).width() > 5 ){
-        if(getRect().y() < r.y()){
-            move(getRect().x(),r.y() - getRect().height() + 1);
-            return true;
-        }
+    if(r.intersected(getRect()).width() > 5 && getRect().y() < r.y())
+    {
+        move(getRect().x(),r.y() - getRect().height() + 1);
+        return true;
     }
     return false;
 }
 
 bool Mario::intersectRight(QRect r)
 {
-    if(r.intersected(getRect()).height() > 5 ){
-        if(getRect().x() < r.x())
-            return true;
-    }
+    if(r.intersected(getRect()).height() > 5 && getRect().x() < r.x() )
+        return true;
     return false;
 }
 
 bool Mario::intersectLeft(QRect r)
 {
-    if(r.intersected(getRect()).height() > 5){
-        if(getRect().x() > r.x())
-            return true;
-    }
+    if(r.intersected(getRect()).height() > 5 && getRect().x() > r.x())
+        return true;
     return false;
 }
 

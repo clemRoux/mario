@@ -8,9 +8,7 @@
 #include "paintvisitor.h"
 
 View::View(QWidget *parent): QWidget(parent)
-
 {
-
 }
 
 void View::paintEvent(QPaintEvent *)
@@ -26,14 +24,14 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getFloors()->at(i)->accept(pVisitor);
     }
 
+    for(int i = 0; i<control->getModel()->getMushroom()->size(); i++){
+        control->getModel()->getMushroom()->at(i)->accept(pVisitor);
+    }
+
     for(int i = 0; i<control->getModel()->getSafes()->size(); i++){
         if(control->getModel()->getSafes()->at(i)->getCapacity()==1)
             control->getModel()->getSafes()->at(i)->setImage(":images/floor_uni.png");
         control->getModel()->getSafes()->at(i)->accept(pVisitor);
-    }
-
-    for(int i = 0; i<control->getModel()->getMushroom()->size(); i++){
-        control->getModel()->getMushroom()->at(i)->accept(pVisitor);
     }
 
     for(int i = 0; i<control->getModel()->getGold()->size(); i++){
@@ -59,10 +57,9 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getDarkEater()->accept(pVisitor);
     }
 
-
     if(control->getModel()->getMario()->getIsLittle()){
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 25, control->getModel()->getMario()->getMoveRSprite().height() - 30));
-        control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+20, control->getModel()->getMario()->getRect().height()+30));
+        control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+25, control->getModel()->getMario()->getRect().height()+27));
     }
     else{
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 45, control->getModel()->getMario()->getMoveRSprite().height() - 7));
@@ -77,7 +74,6 @@ void View::paintEvent(QPaintEvent *)
     QString goldText = "x" + QString::number(control->getModel()->getMario()->getGoldNumber());
     painter.drawText(control->getModel()->getHeader()->getGoldPosition(), goldText);
 
-
     painter.save();
     if(control->getModel()->getMario()->getUntouchable())
         painter.setOpacity(0.4);
@@ -88,7 +84,6 @@ void View::paintEvent(QPaintEvent *)
         painter.drawImage(control->getModel()->getHeader()->getHeart().size().height() * i, 0, control->getModel()->getHeader()->getHeart());
     }
     painter.restore();
-
 
     // Paint SplashScreen
     painter.save();
@@ -101,7 +96,6 @@ void View::paintEvent(QPaintEvent *)
         control->setOpacity(1);
     }
     painter.restore();
-
 
     if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){ // Paint Blood when hurted
         control->getModel()->getBlood()->accept(pVisitor);
@@ -134,8 +128,9 @@ void View::keyPressEvent(QKeyEvent *event)
         control->setIsMovingL(true);
     else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
         control->setIsJumping(true);
-        control->setStartJumpY(control->getModel()->getMario()->getRect().y());
+        control->setXRelatif(-100);
     }
+
     else if (event->key() == Qt::Key_Escape)
     {
         control->stopGame();

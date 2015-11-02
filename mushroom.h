@@ -9,10 +9,11 @@ public:
     Mushroom(int, int);
     ~Mushroom();
     int getMoveCount(){ return moveCount; }
-    void setmoveCount(int m){ this->moveCount = m; }
+    void setmoveCount(int mc){ this->moveCount = mc; }
 
 private:
-    int moveCount = 40;
+    int moveCount = 37;
+
 };
 
 #endif // MUSHROOM_H

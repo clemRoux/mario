@@ -11,3 +11,6 @@ Mushroom::~Mushroom()
 {
     std::cout << ("Mushroom deleted\n");
 }
+
+
+
