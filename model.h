@@ -7,6 +7,7 @@
 #include <QString>
 #include <QList>
 #include <QTextStream>
+#include <QChar>
 
 #include "splashscreen.h"
 #include "header.h"
@@ -14,6 +15,8 @@
 #include "mushroom.h"
 #include "darkeater.h"
 #include "flame.h"
+#include "mystictree.h"
+#include "shock.h"
 
 class Safe;
 class Floor;
@@ -27,7 +30,7 @@ class Model
 public:
     Model();
     ~Model();
-    void createBrick(QList<int> ,int ,int );
+    void createBrick(QList<QChar> ,int ,int );
     void brickOrganisation();
     inline Mario *getMario(){ return mario; }
     SplashScreen *getSplashScreen(){ return splashScreen; }
@@ -40,15 +43,17 @@ public:
     inline QList<Gold*> *getGold(){ return golds; }
     inline QList<Flame*> *getFlame(){ return flames; }
     inline DarkEater *getDarkEater(){ return darkEater; }
+    inline QList<MysticTree*> *getMysticTrees(){ return mysticTrees; }
     inline Blood *getBlood(){ return blood; }
+    inline Shock *getShock(){ return shock; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
     bool getDarkEaterBool(){ return darkEaterBool; }
     void setDarkEaterBool(bool value){ this->darkEaterBool = value; }
     static int const brickSize = 50;
-    static int const Hauteur =500;
-    static int const Longueur =1000;
+    static int const Hauteur = 500;
+    static int const Longueur = 1000;
     static int const NbrBrickVisible = 20;
 
 private:
@@ -59,19 +64,21 @@ private:
     QList<Background*> *background;
     QList<Gold*> *golds;
     QList<Flame*> *flames;
+    QList<MysticTree*> *mysticTrees;
     DarkEater *darkEater;
     Mario *mario;
     SplashScreen *splashScreen;
     Header *header;
     Blood *blood;
+    Shock *shock;
 
-    QList<int> ligne1;
-    QList<int> ligne2;
-    QList<int> ligne3;
-    QList<int> ligne4;
-    QList<int> ligne5;
+    QList<QChar> ligne1;
+    QList<QChar> ligne2;
+    QList<QChar> ligne3;
+    QList<QChar> ligne4;
+    QList<QChar> ligne5;
     int backgroundCount=0;
-    int mapPosition=0;
+    int mapPosition = 7;
     int speed = 4;
     bool darkEaterBool;
 };

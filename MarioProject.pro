@@ -33,7 +33,9 @@ SOURCES += main.cpp \
     view.cpp \
     paintvisitor.cpp \
     blood.cpp \
-    flame.cpp
+    flame.cpp \
+    mystictree.cpp \
+    shock.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -51,6 +53,8 @@ HEADERS  += gameboard.h \
     view.h \
     paintvisitor.h \
     blood.h \
-    flame.h
+    flame.h \
+    mystictree.h \
+    shock.h
 
 DISTFILES +=

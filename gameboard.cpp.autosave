@@ -502,7 +502,7 @@ void GameBoard::flameAnim(){
     }
     else
         tempFlame++;
-    for(int i = 0; i<model->getFlame()->size(); i++){
+   for(int i = 0; i<model->getFlame()->size(); i++){
         int x=model->getFlame()->at(i)->getRect().x();
         moveBrick(x ,model->getFlame()->at(i));
     }

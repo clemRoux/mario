@@ -20,6 +20,10 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getBackground()->at(i)->accept(pVisitor);
     }
 
+    for(int i = 0; i<control->getModel()->getMysticTrees()->size(); i++){
+        control->getModel()->getMysticTrees()->at(i)->accept(pVisitor);
+    }
+
     for(int i = 0; i<control->getModel()->getFloors()->size(); i++){
         control->getModel()->getFloors()->at(i)->accept(pVisitor);
     }
@@ -42,21 +46,25 @@ void View::paintEvent(QPaintEvent *)
     for(int i = 0; i<control->getModel()->getFlame()->size(); i++){
         control->getModel()->getFlame()->at(i)->setSrcRect(QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
         control->getModel()->getFlame()->at(i)->accept(pVisitor);
-        painter.drawPixmap(control->getModel()->getFlame()->at(i)->getRect(), control->getModel()->getFlame()->at(i)->getSprite(), QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
+        //painter.drawPixmap(control->getModel()->getFlame()->at(i)->getRect(), control->getModel()->getFlame()->at(i)->getSprite(), QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
 
     }
 
     if(control->getModel()->getDarkEaterBool()){
-        if(!control->getModel()->getDarkEater()->isDead()){
-            control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
-        }
-        else if(control->getModel()->getDarkEater()->isDead()){
+        if(control->getModel()->getDarkEater()->isDead() || control->getModel()->getDarkEater()->getIsMovingR()){
             control->getModel()->getDarkEater()->setRect(QRect(control->getModel()->getDarkEater()->getRect().x(), control->getModel()->getDarkEater()->getRect().y(), control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height() ));
             control->getModel()->getDarkEater()->setSrcRect(QRect(0, 0, control->getModel()->getDarkEater()->getSrcRect().width(), control->getModel()->getDarkEater()->getSrcRect().height()));
+        }
+        else if(!control->getModel()->getDarkEater()->isDead()){
+            control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
         }
         control->getModel()->getDarkEater()->accept(pVisitor);
     }
 
+    if(control->getModel()->getShock()->getShow()){
+        control->getModel()->getShock()->setSrcRect(QRect(0, Shock::currentFrame, control->getModel()->getShock()->getRect().width(), control->getModel()->getShock()->getRect().height()));
+        control->getModel()->getShock()->accept(pVisitor);
+    }
     if(control->getModel()->getMario()->getIsLittle()){
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 25, control->getModel()->getMario()->getMoveRSprite().height() - 30));
         control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+25, control->getModel()->getMario()->getRect().height()+27));
@@ -102,6 +110,7 @@ void View::paintEvent(QPaintEvent *)
     }
 
 
+
     // Paint Mario's fantom when loosing a life
     /*
     if(control->getModel()->getMario()->getIsHurted()){
@@ -112,9 +121,6 @@ void View::paintEvent(QPaintEvent *)
     else
         control->setOpacity(1);
     */
-
-
-
 
 }
 
