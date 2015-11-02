@@ -293,6 +293,7 @@ void GameBoard::intersectFlameMario()
 {
     for(int i = 0; i<model->getFlame()->size(); i++){
         if(model->getMario()->intersect(model->getFlame()->at(i)->getRect()) && !model->getMario()->getUntouchable()){
+            showBloodCount = 0;
             this->model->getMario()->setIsHurted(true);
         }
     }
@@ -315,6 +316,7 @@ void GameBoard::intersectDarkEaterMario()
                 && !model->getMario()->getUntouchable()
                 && !model->getDarkEater()->isDead())
         {
+            showBloodCount = 0;
             this->model->getMario()->setIsHurted(true);
         }
     }
@@ -335,18 +337,21 @@ void GameBoard::intersectMushroomMario()
 void GameBoard::intersectMysticTreeMario()
 {
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
-        if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect()) && !getModel()->getMysticTrees()->at(i)->isDead()){
+        if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect())
+                && !getModel()->getMysticTrees()->at(i)->isDead()){
             getModel()->getMysticTrees()->at(i)->setDead(true);
             model->getMysticTrees()->at(i)->setIsMovingL(false);
             getModel()->getShock()->move(model->getMysticTrees()->at(i)->getRect().x() - 50, model->getMysticTrees()->at(i)->getRect().y() - 50);
             getModel()->getShock()->setShow(true);
             Shock::currentFrame = 0;
+
         }
         else if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect())
                  || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
                 && !model->getMario()->getUntouchable()
                 && !model->getMysticTrees()->at(i)->isDead())
         {
+            showBloodCount = 0;
             this->model->getMario()->setIsHurted(true);
         }
     }
@@ -406,8 +411,7 @@ void GameBoard::flameAnim(){
 void GameBoard::hurted(){
     if(model->getMario()->getIsHurted()){
         model->getMario()->setUntouchable(true);
-
-        if(showBloodCount >= 20){
+        if(showBloodCount >= 15){
             this->getModel()->getBlood()->setStopBlood(true);
             showBloodCount = 0;
         }
@@ -415,8 +419,8 @@ void GameBoard::hurted(){
             showBloodCount++;
         }
 
-        //this->getModel()->getBlood()->move(model->getMario()->getRect().x() - 250, model->getMario()->getRect().y() - 350);
-        this->getModel()->getBlood()->move(150, - 100);
+        this->getModel()->getBlood()->move(model->getMario()->getRect().x() - 250, model->getMario()->getRect().y() - 350);
+        //this->getModel()->getBlood()->move(150, - 100);
 
         if(getModel()->getMario()->getInvicible() == 0){
             model->getMario()->setLife(model->getMario()->getLife() - 1);
