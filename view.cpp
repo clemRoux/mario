@@ -53,16 +53,20 @@ void View::paintEvent(QPaintEvent *)
     }
 
     if(control->getModel()->getDarkEaterBool()){
-        if(!control->getModel()->getDarkEater()->isDead()){
-            control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
-        }
-        else if(control->getModel()->getDarkEater()->isDead()){
+        if(control->getModel()->getDarkEater()->isDead() || control->getModel()->getDarkEater()->getIsMovingR()){
             control->getModel()->getDarkEater()->setRect(QRect(control->getModel()->getDarkEater()->getRect().x(), control->getModel()->getDarkEater()->getRect().y(), control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height() ));
             control->getModel()->getDarkEater()->setSrcRect(QRect(0, 0, control->getModel()->getDarkEater()->getSrcRect().width(), control->getModel()->getDarkEater()->getSrcRect().height()));
+        }
+        else if(!control->getModel()->getDarkEater()->isDead()){
+            control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
         }
         control->getModel()->getDarkEater()->accept(pVisitor);
     }
 
+    if(control->getModel()->getShock()->getShow()){
+        control->getModel()->getShock()->setSrcRect(QRect(0, Shock::currentFrame, control->getModel()->getShock()->getRect().width(), control->getModel()->getShock()->getRect().height()));
+        control->getModel()->getShock()->accept(pVisitor);
+    }
 
     if(control->getModel()->getMario()->getIsLittle()){
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 25, control->getModel()->getMario()->getMoveRSprite().height() - 30));
@@ -110,6 +114,7 @@ void View::paintEvent(QPaintEvent *)
     if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){ // Paint Blood when hurted
         control->getModel()->getBlood()->accept(pVisitor);
     }
+
 
 
     // Paint Mario's fantom when loosing a life

@@ -42,6 +42,7 @@ public:
     void intersectMysticTreeMario();
     void goldAnim();
     void flameAnim();
+    void shockAnim();
     void movementDarkEater();
     void fantom();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
@@ -74,6 +75,7 @@ private:
     int darkEaterTempo = 0;
     int tempGold = 0;
     int tempFlame = 0;
+    int tempShock = 0;
     qreal opacity = 1;
     bool isLittle;
     int showBloodCount = 0;

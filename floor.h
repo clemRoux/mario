@@ -8,6 +8,6 @@ public:
 
   Floor(int, int, QString);
   ~Floor();
-};
 
+};
 #endif // FLOOR_H

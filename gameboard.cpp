@@ -23,6 +23,7 @@ GameBoard::GameBoard(Model *m, View *v) : QObject()
 }
 
 int Gold::currentFrame = 0;
+int Shock::currentFrame = 0;
 int Flame::currentFrame = 0;
 int Brick::speed = 5;
 
@@ -52,6 +53,7 @@ void GameBoard::timerEvent(QTimerEvent *event)
     model->brickOrganisation();
     goldAnim();
     flameAnim();
+    shockAnim();
     hurted();
     emit sendPaintIt();
 }
@@ -194,7 +196,6 @@ bool GameBoard::intersectTopMario()
         if(model->getMario()->intersectTop(model->getSafes()->at(i)->getRect())){
             if(model->getSafes()->at(i)->getCapacity()){
                 if(model->getSafes()->at(i)->getCapacity() == 2){
-                    qDebug() << "hello";
                     model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y());
                     model->getSafes()->at(i)->setCapacity(1);
                 }
@@ -300,9 +301,14 @@ void GameBoard::intersectFlameMario()
 void GameBoard::intersectDarkEaterMario()
 {
     if(model->getDarkEaterBool()){
-        if(model->getMario()->intersectBottom(model->getDarkEater()->getRect()) && !getModel()->getDarkEater()->isDead()){
+        if(model->getMario()->intersectBottom(model->getDarkEater()->getRect())
+                && !getModel()->getDarkEater()->isDead()
+                && !model->getMario()->getUntouchable()){
             model->getDarkEater()->setIsMovingL(false);
             getModel()->getDarkEater()->setDead(true);
+            getModel()->getShock()->move(model->getDarkEater()->getRect().x() - 50, model->getDarkEater()->getRect().y() - 50);
+            getModel()->getShock()->setShow(true);
+            Shock::currentFrame = 0;
         }
         else if((model->getMario()->intersectRight(model->getDarkEater()->getRect())
                  || model->getMario()->intersectTop(model->getDarkEater()->getRect()))
@@ -332,9 +338,12 @@ void GameBoard::intersectMysticTreeMario()
         if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect()) && !getModel()->getMysticTrees()->at(i)->isDead()){
             getModel()->getMysticTrees()->at(i)->setDead(true);
             model->getMysticTrees()->at(i)->setIsMovingL(false);
+            getModel()->getShock()->move(model->getMysticTrees()->at(i)->getRect().x() - 50, model->getMysticTrees()->at(i)->getRect().y() - 50);
+            getModel()->getShock()->setShow(true);
+            Shock::currentFrame = 0;
         }
-        else if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect()))
-                // || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
+        else if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect())
+                 || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
                 && !model->getMario()->getUntouchable()
                 && !model->getMysticTrees()->at(i)->isDead())
         {
@@ -367,6 +376,19 @@ void GameBoard::goldAnim(){
     }
     else
         tempGold++;
+}
+
+void GameBoard::shockAnim(){
+    if(tempShock == 3){
+        Shock::currentFrame += 66;
+        if (Shock::currentFrame >= 200){
+            Shock::currentFrame = 0;
+            getModel()->getShock()->setShow(false);
+        }
+        tempShock = 0;
+    }
+    else
+        tempShock++;
 }
 
 void GameBoard::flameAnim(){
@@ -446,12 +468,12 @@ void GameBoard::movementMysticTree(){
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
         if(model->getMysticTrees()->at(i)->getIsMovingL()){
             if(model->getMysticTrees()->at(i)->getMoveCount() > 0){
-                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
-                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() - 1);
+                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 2);
+                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() - 2);
             }
             else if(model->getMysticTrees()->at(i)->getMoveCount() > - 120){
-                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 1);
-                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() + 1);
+                model->getMysticTrees()->at(i)->setmoveCount(model->getMysticTrees()->at(i)->getMoveCount() - 2);
+                model->getMysticTrees()->at(i)->move(model->getMysticTrees()->at(i)->getRect().x(), model->getMysticTrees()->at(i)->getRect().y() + 2);
             }
             else{
                 model->getMysticTrees()->at(i)->setmoveCount(120);

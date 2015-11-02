@@ -16,6 +16,7 @@
 #include "darkeater.h"
 #include "flame.h"
 #include "mystictree.h"
+#include "shock.h"
 
 class Safe;
 class Floor;
@@ -44,6 +45,7 @@ public:
     inline DarkEater *getDarkEater(){ return darkEater; }
     inline QList<MysticTree*> *getMysticTrees(){ return mysticTrees; }
     inline Blood *getBlood(){ return blood; }
+    inline Shock *getShock(){ return shock; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
@@ -68,6 +70,7 @@ private:
     SplashScreen *splashScreen;
     Header *header;
     Blood *blood;
+    Shock *shock;
 
     QList<QChar> ligne1;
     QList<QChar> ligne2;

@@ -9,6 +9,7 @@
 #include <splashscreen.h>
 #include <header.h>
 #include "flame.h"
+#include "shock.h"
 #include <QDebug>
 
 Model::Model()
@@ -26,6 +27,7 @@ Model::Model()
     this->mysticTrees = new QList<MysticTree *>;
     this->mario = new Mario(200,340);
     this->blood = new Blood(0,0);
+    this->shock = new Shock(0,0);
 
     QFile fichier(":ModelMap.txt");
 
