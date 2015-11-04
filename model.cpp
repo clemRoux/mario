@@ -11,6 +11,7 @@
 #include "flame.h"
 #include "shock.h"
 #include "peach.h"
+#include "encart.h"
 #include <QDebug>
 
 Model::Model()
@@ -29,6 +30,8 @@ Model::Model()
     this->mario = new Mario(200, 340);
     this->blood = new Blood(0,0);
     this->shock = new Shock(0,0);
+    getEncart()->setShow(true);
+    createEncart(getMario()->getRect().x(), getMario()->getRect().y() - 100, ":images/speech_gold.png");
 
     QFile fichier(":ModelMap.txt");
 
@@ -252,4 +255,8 @@ void Model::createGameOver(int x, int y){
 void Model::createPeach(int x, int y){
     this->peach = new Peach(x, y);
     this->peach->setIsMovingL(true);
+}
+
+void Model::createEncart(int x, int y, QString image){
+    this->encart = new Encart(x, y, image);
 }

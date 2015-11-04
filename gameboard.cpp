@@ -45,12 +45,14 @@ void GameBoard::stopGame()
 
 void GameBoard::timerEvent(QTimerEvent *event)
 {
+    encart();
     splashScreen();
     movementMario();
     movementMushroom();
     movementDarkEater();
     movementMysticTree();
     movementPeach();
+    movementEncart();
     model->brickOrganisation();
     goldAnim();
     flameAnim();
@@ -408,7 +410,10 @@ void GameBoard::intersectPeachMario()
 {
     if(getModel()->getIsPeachBool()){
         if(model->getMario()->intersect(model->getPeach()->getRect())){
-            model->getMario()->setGoldNumber(model->getMario()->getGoldNumber() + 100);
+            getModel()->getEncart()->setShow(true);
+            encartTime = 0;
+            //model->getMario()->setGoldNumber(model->getMario()->getGoldNumber() + 100);
+            getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech.png");
         }
     }
 }
@@ -598,6 +603,9 @@ void GameBoard::hurted()
         //this->getModel()->getBlood()->move(150, - 100);
 
         if(getModel()->getMario()->getInvicible() == 0){
+            getModel()->getEncart()->setShow(true);
+            encartTime = 0;
+            getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_hell.png");
             model->getMario()->setLife(model->getMario()->getLife() - 1);
         }
         if(getModel()->getMario()->getInvicible() > 100){
@@ -612,6 +620,11 @@ void GameBoard::hurted()
 
 
     }
+}
+
+void GameBoard::movementEncart(){
+    if(getModel()->getEncart()->getShow())
+        getModel()->getEncart()->move(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100);
 }
 
 void GameBoard::fantom()
@@ -660,4 +673,11 @@ void GameBoard::Peach(){
         getModel()->createPeach(getModel()->getMario()->getRect().x() + 200, 340);
         getModel()->setIsPeachBool(true);
     }
+}
+
+void GameBoard::encart(){
+    if(encartTime > 100)
+        getModel()->getEncart()->setShow(false);
+    else
+        encartTime++;
 }

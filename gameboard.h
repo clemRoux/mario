@@ -31,6 +31,7 @@ public:
     void movementPeach();
     void moveBrick(int ,Brick *);
     void movementMysticTree();
+    void movementEncart();
     void splashScreen();
     void GameOver();
     void hurted();
@@ -53,6 +54,7 @@ public:
     void shockAnim();
     void movementDarkEater();
     void fantom();
+    void encart();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
     inline bool getIsMovingL(){ return getModel()->getMario()->getIsMovingL(); }
     inline bool getIsJumping(){ return getModel()->getMario()->getIsJumping(); }
@@ -93,6 +95,7 @@ private:
     bool isLittle;
     bool isGameOver = false;
     int showBloodCount = 0;
+    int encartTime = 0;
 
 signals:
     void sendPaintIt();

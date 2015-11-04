@@ -77,6 +77,9 @@ void View::paintEvent(QPaintEvent *)
 
     control->getModel()->getMario()->accept(pVisitor);
 
+    if(control->getModel()->getEncart()->getShow())
+        control->getModel()->getEncart()->accept(pVisitor);
+
     if(control->getModel()->getIsPeachBool()){
         control->getModel()->getPeach()->setRect(QRect(control->getModel()->getPeach()->getRect().x(), control->getModel()->getPeach()->getRect().y(), control->getModel()->getPeach()->getMoveLSprite().width() / 4, control->getModel()->getPeach()->getMoveLSprite().height()));
         control->getModel()->getPeach()->setSrcRect(QRect(control->getModel()->getPeach()->getCurrentFrame(), 0, control->getModel()->getPeach()->getRect().width(), control->getModel()->getPeach()->getRect().height() + 4));

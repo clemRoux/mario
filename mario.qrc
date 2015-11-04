@@ -36,5 +36,8 @@
         <file>images/blood_small.png</file>
         <file>images/gameover.png</file>
         <file>images/peach_sprite.png</file>
+        <file>images/speech.png</file>
+        <file>images/speech_gold.png</file>
+        <file>images/speech_hell.png</file>
     </qresource>
 </RCC>

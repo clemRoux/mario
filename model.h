@@ -17,6 +17,7 @@
 #include "flame.h"
 #include "mystictree.h"
 #include "shock.h"
+#include "encart.h"
 
 class Safe;
 class Floor;
@@ -48,6 +49,7 @@ public:
     inline Blood *getBlood(){ return blood; }
     inline Peach *getPeach(){ return peach; }
     inline Shock *getShock(){ return shock; }
+    inline Encart *getEncart(){ return encart; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
@@ -57,6 +59,7 @@ public:
     void setIsPeachBool(bool value){ this->isPeachBool = value; }
     void createGameOver(int x, int y);
     void createPeach(int x, int y);
+    void createEncart(int x, int y, QString image);
     static int const brickSize = 50;
     static int const Hauteur = 500;
     static int const Longueur = 1000;
@@ -78,6 +81,7 @@ private:
     Header *header;
     Blood *blood;
     Shock *shock;
+    Encart *encart;
 
     QList<QChar> ligne1;
     QList<QChar> ligne2;
