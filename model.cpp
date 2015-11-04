@@ -10,6 +10,7 @@
 #include <header.h>
 #include "flame.h"
 #include "shock.h"
+#include "peach.h"
 #include <QDebug>
 
 Model::Model()
@@ -20,12 +21,12 @@ Model::Model()
     this->mushroom = new QList<Mushroom *>;
     this->golds = new QList<Gold *>;
     this->flames = new QList<Flame *>;
-    this->splashScreen = new SplashScreen(300, 100);
+    this->splashScreen = new SplashScreen(300, 100, ":images/go.png");
     this->background = new QList<Background *>;
     this->header = new Header();
     this->compteur = new QList<Brick*> ;
     this->mysticTrees = new QList<MysticTree *>;
-    this->mario = new Mario(200,340);
+    this->mario = new Mario(200, 340);
     this->blood = new Blood(0,0);
     this->shock = new Shock(0,0);
 
@@ -244,4 +245,11 @@ void Model::createMushroom(int x, int y){
     mushroom->append(m);
 }
 
+void Model::createGameOver(int x, int y){
+    this->splashScreen = new SplashScreen(x, y, ":images/gameover.png");
+}
 
+void Model::createPeach(int x, int y){
+    this->peach = new Peach(x, y);
+    this->peach->setIsMovingL(true);
+}

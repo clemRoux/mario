@@ -10,5 +10,5 @@ Header::Header()
     this->heartSize = heart.rect();
     gold.load(":images/gold_small.png");
     this->goldSize = gold.rect();
-    this->goldPosition = QPoint(this->getRect().width() + 30, this->getRect().height() - 15);
+    this->goldPosition = QPoint(this->getRect().width() + 40, this->getRect().height() - 10);
 }

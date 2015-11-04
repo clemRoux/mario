@@ -21,6 +21,7 @@
 class Safe;
 class Floor;
 class Mario;
+class Peach;
 class Brick;
 class Gold;
 class Blood;
@@ -45,12 +46,17 @@ public:
     inline DarkEater *getDarkEater(){ return darkEater; }
     inline QList<MysticTree*> *getMysticTrees(){ return mysticTrees; }
     inline Blood *getBlood(){ return blood; }
+    inline Peach *getPeach(){ return peach; }
     inline Shock *getShock(){ return shock; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
     bool getDarkEaterBool(){ return darkEaterBool; }
     void setDarkEaterBool(bool value){ this->darkEaterBool = value; }
+    bool getIsPeachBool(){ return isPeachBool; }
+    void setIsPeachBool(bool value){ this->isPeachBool = value; }
+    void createGameOver(int x, int y);
+    void createPeach(int x, int y);
     static int const brickSize = 50;
     static int const Hauteur = 500;
     static int const Longueur = 1000;
@@ -67,6 +73,7 @@ private:
     QList<MysticTree*> *mysticTrees;
     DarkEater *darkEater;
     Mario *mario;
+    Peach * peach;
     SplashScreen *splashScreen;
     Header *header;
     Blood *blood;
@@ -81,6 +88,7 @@ private:
     int mapPosition = 7;
     int speed = 4;
     bool darkEaterBool;
+    bool isPeachBool = false;
 };
 
 #endif // MODEL_H

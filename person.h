@@ -33,6 +33,8 @@ class Person
     inline void setIsMovingR(bool is){ this->isMovingR = is; }
     inline void setIsMovingL(bool is){ this->isMovingL = is; }
     inline void setIsJumping(bool is){ this->isJumping = is; }
+    inline bool getIsAttacking(){ return isAttacking; }
+    inline void setIsAttacking(bool is){ this->isAttacking = is; }
     void move(int , int);
     void moveDie(int ,int );
     inline int getLife(){ return life; }
@@ -57,6 +59,7 @@ class Person
     bool isMovingR;
     bool isMovingL;
     bool isJumping;
+    bool isAttacking = false;
     bool dead = false;
     int currentFrame = 0;
  private:

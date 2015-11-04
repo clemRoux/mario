@@ -21,7 +21,7 @@ bool Mario::intersectTop(QRect r)
 {
     if(r.intersected(getRect()).width() > 7 && getRect().y() > r.y())
     {
-        move(getRect().x(),r.y()+49);
+        move(getRect().x(),r.y() + 49);
         return true;
     }
     return false;

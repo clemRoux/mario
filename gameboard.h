@@ -28,10 +28,13 @@ public:
     void movementMap();
     void movementBackground();
     void movementMushroom();
+    void movementPeach();
     void moveBrick(int ,Brick *);
     void movementMysticTree();
     void splashScreen();
+    void GameOver();
     void hurted();
+    void Peach();
     bool intersectBottomMario();
     bool intersectTopMario();
     bool intersectRightMario();
@@ -44,6 +47,7 @@ public:
     bool intersectRightBrick(Brick *);
     bool intersectLeftBrick(Brick *);
     void intersectMysticTreeMario();
+    void intersectPeachMario();
     void goldAnim();
     void flameAnim();
     void shockAnim();
@@ -52,9 +56,13 @@ public:
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
     inline bool getIsMovingL(){ return getModel()->getMario()->getIsMovingL(); }
     inline bool getIsJumping(){ return getModel()->getMario()->getIsJumping(); }
+    inline bool getIsAttacking(){ return getModel()->getMario()->getIsAttacking(); }
     inline void setIsMovingR(bool is){ getModel()->getMario()->setIsMovingR(is); }
     inline void setIsMovingL(bool is){ getModel()->getMario()->setIsMovingL(is); }
     inline void setIsJumping(bool is){ getModel()->getMario()->setIsJumping(is); }
+    inline void setIsAttacking(bool is){ getModel()->getMario()->setIsAttacking(is); }
+    inline void setIsGameOver(bool is){ this->isGameOver = is; }
+    inline bool getIsGameOVer(){ return isGameOver; }
     inline std::tuple<> getAllObjects();
     inline Model *getModel(){ return this->model; }
     inline qreal getOpacity(){ return opacity; }
@@ -77,11 +85,13 @@ private:
     int tempMove = 0;
     int marioSize;
     int darkEaterTempo = 0;
+    int peachTempo = 0;
     int tempGold = 0;
     int tempFlame = 0;
     int tempShock = 0;
     qreal opacity = 1;
     bool isLittle;
+    bool isGameOver = false;
     int showBloodCount = 0;
 
 signals:

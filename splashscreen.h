@@ -5,7 +5,7 @@
 class SplashScreen : public Brick
 {
 public:
-    SplashScreen(int, int);
+    SplashScreen(int, int, QString);
     ~SplashScreen();
     inline bool getIsSplashScreen(){ return isSplashScreen; }
     inline void setIsSplashScreen(bool splash){ this->isSplashScreen = splash; }

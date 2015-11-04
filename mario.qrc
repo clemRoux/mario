@@ -33,5 +33,8 @@
         <file>images/floor_right.png</file>
         <file>images/mysticTree_die.png</file>
         <file>images/shock.png</file>
+        <file>images/blood_small.png</file>
+        <file>images/gameover.png</file>
+        <file>images/peach_sprite.png</file>
     </qresource>
 </RCC>

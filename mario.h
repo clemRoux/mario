@@ -18,8 +18,6 @@ public:
     bool intersectLeft(QRect );
     bool getIsLittle(){ return isLittle; }
     void setIsLittle(bool little){ this->isLittle = little; }
-    inline int getCurrentFrame(){ return currentFrame; }
-    inline void setCurrentFrame(int frame){ this->currentFrame = frame; }
     inline bool getIsHurted(){ return isHurted; }
     inline void setIsHurted(bool hurt){ this->isHurted = hurt; }
 
@@ -27,7 +25,7 @@ private:
     int goldNumber;
     bool isLittle = false;
     bool isHurted = false;
-
+    bool hurt = false;
 
 };
 

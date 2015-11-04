@@ -35,7 +35,9 @@ SOURCES += main.cpp \
     blood.cpp \
     flame.cpp \
     mystictree.cpp \
-    shock.cpp
+    shock.cpp \
+    peach.cpp \
+    encart.cpp
 
 HEADERS  += gameboard.h \
     brick.h \
@@ -55,6 +57,9 @@ HEADERS  += gameboard.h \
     blood.h \
     flame.h \
     mystictree.h \
-    shock.h
+    shock.h \
+    peach.h \
+    encart.h
 
-DISTFILES +=
+DISTFILES += \
+    images/gameover.png

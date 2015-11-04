@@ -65,6 +65,7 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getShock()->setSrcRect(QRect(0, Shock::currentFrame, control->getModel()->getShock()->getRect().width(), control->getModel()->getShock()->getRect().height()));
         control->getModel()->getShock()->accept(pVisitor);
     }
+
     if(control->getModel()->getMario()->getIsLittle()){
         control->getModel()->getMario()->setRect(QRect(control->getModel()->getMario()->getRect().x(), control->getModel()->getMario()->getRect().y(), 25, control->getModel()->getMario()->getMoveRSprite().height() - 30));
         control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 0, control->getModel()->getMario()->getRect().width()+25, control->getModel()->getMario()->getRect().height()+27));
@@ -76,10 +77,16 @@ void View::paintEvent(QPaintEvent *)
 
     control->getModel()->getMario()->accept(pVisitor);
 
+    if(control->getModel()->getIsPeachBool()){
+        control->getModel()->getPeach()->setRect(QRect(control->getModel()->getPeach()->getRect().x(), control->getModel()->getPeach()->getRect().y(), control->getModel()->getPeach()->getMoveLSprite().width() / 4, control->getModel()->getPeach()->getMoveLSprite().height()));
+        control->getModel()->getPeach()->setSrcRect(QRect(control->getModel()->getPeach()->getCurrentFrame(), 0, control->getModel()->getPeach()->getRect().width(), control->getModel()->getPeach()->getRect().height() + 4));
+        control->getModel()->getPeach()->accept(pVisitor);
+    }
+
     // Paint Header Texts & Images
     painter.drawImage(control->getModel()->getHeader()->getRect().width() - 0, control->getModel()->getHeader()->getRect().height() / 8, control->getModel()->getHeader()->getGold());
-    painter.setFont(QFont("Tahoma", 12, -1, false));
-    QString goldText = "x" + QString::number(control->getModel()->getMario()->getGoldNumber());
+    painter.setFont(QFont("Tahoma", 17, 0, true));
+    QString goldText = QString::number(control->getModel()->getMario()->getGoldNumber());
     painter.drawText(control->getModel()->getHeader()->getGoldPosition(), goldText);
 
     painter.save();
@@ -104,6 +111,9 @@ void View::paintEvent(QPaintEvent *)
         control->setOpacity(1);
     }
     painter.restore();
+
+    if(control->getModel()->getSplashScreen()->getIsSplashScreen())
+        control->getModel()->getSplashScreen()->accept(pVisitor);
 
     if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){ // Paint Blood when hurted
         control->getModel()->getBlood()->accept(pVisitor);
@@ -132,11 +142,12 @@ void View::keyPressEvent(QKeyEvent *event)
         control->setIsMovingR(true);
     else if(event->key() == Qt::Key_Left)
         control->setIsMovingL(true);
+    else if(event->key() == Qt::Key_Down)
+        control->setIsAttacking(true);
     else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
         control->setIsJumping(true);
         control->setXRelatif(-100);
     }
-
     else if (event->key() == Qt::Key_Escape)
     {
         control->stopGame();
