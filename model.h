@@ -42,15 +42,13 @@ public:
     inline QList<Mushroom*> *getMushroom(){ return mushroom; }
     inline QList<Gold*> *getGold(){ return golds; }
     inline QList<Flame*> *getFlame(){ return flames; }
-    inline DarkEater *getDarkEater(){ return darkEater; }
+    inline QList<DarkEater*> *getDarkEater(){ return darkEater; }
     inline QList<MysticTree*> *getMysticTrees(){ return mysticTrees; }
     inline Blood *getBlood(){ return blood; }
     inline Shock *getShock(){ return shock; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
     void createMushroom(int, int);
-    bool getDarkEaterBool(){ return darkEaterBool; }
-    void setDarkEaterBool(bool value){ this->darkEaterBool = value; }
     static int const brickSize = 50;
     static int const Hauteur = 500;
     static int const Longueur = 1000;
@@ -65,7 +63,7 @@ private:
     QList<Gold*> *golds;
     QList<Flame*> *flames;
     QList<MysticTree*> *mysticTrees;
-    DarkEater *darkEater;
+    QList<DarkEater *> *darkEater;
     Mario *mario;
     SplashScreen *splashScreen;
     Header *header;
@@ -80,7 +78,6 @@ private:
     int backgroundCount=0;
     int mapPosition = 7;
     int speed = 4;
-    bool darkEaterBool;
 };
 
 #endif // MODEL_H

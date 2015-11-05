@@ -20,12 +20,13 @@ Model::Model()
     this->mushroom = new QList<Mushroom *>;
     this->golds = new QList<Gold *>;
     this->flames = new QList<Flame *>;
+    this->darkEater=new QList<DarkEater *>;
     this->splashScreen = new SplashScreen(300, 100);
     this->background = new QList<Background *>;
     this->header = new Header();
     this->compteur = new QList<Brick*> ;
     this->mysticTrees = new QList<MysticTree *>;
-    this->mario = new Mario(200,340);
+    this->mario = new Mario(200,100);
     this->blood = new Blood(0,0);
     this->shock = new Shock(0,0);
 
@@ -111,6 +112,8 @@ Model::~Model()
     delete background;
     mushroom->clear();
     delete mushroom;
+    darkEater->clear();
+    delete darkEater;
     delete flames;
     golds->clear();
     delete golds;
@@ -143,8 +146,9 @@ void Model::createBrick(QList<QChar> l ,int num ,int x){
         return;
     }
     else if(myChar == '4'){
-        this->darkEater = new DarkEater(x+brickSize, Hauteur-num*brickSize);
-        this->darkEaterBool = true;
+        DarkEater* d= new DarkEater(x+brickSize, Hauteur-num*brickSize);
+        d->setMoveX(false);
+        darkEater->append(d);
         return;
     }
     else if(myChar == '5'){
@@ -173,7 +177,7 @@ void Model::createBrick(QList<QChar> l ,int num ,int x){
         Floor *k= new Floor(x+brickSize,Hauteur-num*brickSize , QString(":images/floor_left.png"));
         floors->append(k);
         return;
-    }
+    }  
     else if(myChar == 'a'){
         MysticTree *k= new MysticTree(x+brickSize,Hauteur-num*brickSize);
         mysticTrees->append(k);
@@ -235,6 +239,12 @@ void Model::brickOrganisation()
     for(int i = 0; i<flames->size(); i++){
         if (flames->at(i)->getRect().x()<=-brickSize || flames->at(i)->isDestroyed()){
             flames->removeAt(i);
+        }
+    }
+
+    for(int i = 0; i<darkEater->size(); i++){
+        if (darkEater->at(i)->getRect().x()<=-brickSize ){
+            darkEater->removeAt(i);
         }
     }
 }

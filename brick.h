@@ -14,8 +14,8 @@ class Brick
     Brick(int ,int );
     Brick(int, int , QString );
     ~Brick();
-    bool isDestroyed();
-    void setDestroyed(bool);
+    inline bool isDestroyed(){ return destroyed;}
+    inline void setDestroyed(bool d){this->destroyed=d;}
     QRect getRect();
     void setRect(QRect);
     QImage & getImage();
@@ -27,6 +27,8 @@ class Brick
     inline void setSprite(QString sprite){ this->sprite.load(sprite); }
     inline QRect getSrcRect(){ return srcRect; }
     inline void setSrcRect(QRect srcRect){ this->srcRect = srcRect; }
+    inline QRect getDieRect(){ return dieRect; }
+    inline void setDieRect(QRect dieRect){ this->dieRect = dieRect; }
     bool intersectBottom(QRect );
     bool intersectRight(QRect );
     bool intersectLeft(QRect );
@@ -48,6 +50,7 @@ class Brick
     int startY;
 protected:
     QRect rect;
+    QRect dieRect;
     QPixmap sprite;
     QRect srcRect;
 

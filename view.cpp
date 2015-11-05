@@ -46,19 +46,16 @@ void View::paintEvent(QPaintEvent *)
     for(int i = 0; i<control->getModel()->getFlame()->size(); i++){
         control->getModel()->getFlame()->at(i)->setSrcRect(QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
         control->getModel()->getFlame()->at(i)->accept(pVisitor);
-        //painter.drawPixmap(control->getModel()->getFlame()->at(i)->getRect(), control->getModel()->getFlame()->at(i)->getSprite(), QRect(Flame::currentFrame, 0, control->getModel()->getFlame()->at(i)->getRect().width(), control->getModel()->getFlame()->at(i)->getRect().height()));
-
     }
 
-    if(control->getModel()->getDarkEaterBool()){
-        if(control->getModel()->getDarkEater()->isDead() || control->getModel()->getDarkEater()->getIsMovingR()){
-            control->getModel()->getDarkEater()->setRect(QRect(control->getModel()->getDarkEater()->getRect().x(), control->getModel()->getDarkEater()->getRect().y(), control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height() ));
-            control->getModel()->getDarkEater()->setSrcRect(QRect(0, 0, control->getModel()->getDarkEater()->getSrcRect().width(), control->getModel()->getDarkEater()->getSrcRect().height()));
+    for(int i = 0; i<control->getModel()->getDarkEater()->size(); i++){
+        if(!control->getModel()->getDarkEater()->at(i)->isDestroyed())
+            control->getModel()->getDarkEater()->at(i)->setSrcRect(QRect(DarkEater::currentFrame, 0, control->getModel()->getDarkEater()->at(i)->getRect().width(), control->getModel()->getDarkEater()->at(i)->getRect().height()));
+        else{
+            control->getModel()->getDarkEater()->at(i)->setSprite(QString(":images/dark_eater_die.png"));
+            control->getModel()->getDarkEater()->at(i)->setSrcRect(QRect(0, 0, control->getModel()->getDarkEater()->at(i)->getRect().width(), control->getModel()->getDarkEater()->at(i)->getRect().height()));
         }
-        else if(!control->getModel()->getDarkEater()->isDead()){
-            control->getModel()->getDarkEater()->setSrcRect(QRect(control->getModel()->getDarkEater()->getCurrentFrame(), 0, control->getModel()->getDarkEater()->getRect().width(), control->getModel()->getDarkEater()->getRect().height()));
-        }
-        control->getModel()->getDarkEater()->accept(pVisitor);
+        control->getModel()->getDarkEater()->at(i)->accept(pVisitor);
     }
 
     if(control->getModel()->getShock()->getShow()){

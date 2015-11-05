@@ -36,16 +36,6 @@ QImage & Brick::getImage()
     return image;
 }
 
-bool Brick::isDestroyed()
-{
-    return destroyed;
-}
-
-void Brick::setDestroyed(bool destr)
-{
-    destroyed = destr;
-}
-
 void Brick::moveBrick()
 {
     rect.moveTo(rect.left() - Brick::speed, rect.top());

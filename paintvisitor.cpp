@@ -22,5 +22,5 @@ void PaintVisitor::visitPixmap(Person *e){
 }
 
 void PaintVisitor::visitPixmap(Brick *e){
-    getPainter()->drawPixmap(e->getRect(), e->getSprite(), e->getSrcRect());
+        getPainter()->drawPixmap(e->getRect(), e->getSprite(), e->getSrcRect());
 }

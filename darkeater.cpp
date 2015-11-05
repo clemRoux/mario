@@ -1,13 +1,10 @@
 #include "darkeater.h"
 #include <iostream>
 
-DarkEater::DarkEater(int x, int y) : Person(x,y)
+DarkEater::DarkEater(int x, int y) : Brick(x,y)
 {
-    this->moveLSprite = QPixmap(":images/dark_eater.png");
-    this->moveRSprite = QPixmap(":images/dark_eater_right.png");
-    this->stopSprite = QPixmap(":images/dark_eater_die.png");
-    this->rect = QRect(x, y, moveLSprite.width()/3, moveLSprite.height());
-    this->isMovingL = true;
+    this->setSprite(QString(":images/dark_eater.png"));
+    this->rect = QRect(x, y+5, getSprite().width()/3, getSprite().height());
 }
 
 DarkEater::~DarkEater(){

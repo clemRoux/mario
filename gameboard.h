@@ -47,7 +47,7 @@ public:
     void goldAnim();
     void flameAnim();
     void shockAnim();
-    void movementDarkEater();
+    void darkeaterAnim();
     void fantom();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
     inline bool getIsMovingL(){ return getModel()->getMario()->getIsMovingL(); }
@@ -76,7 +76,7 @@ private:
     int iterBackground;
     int tempMove = 0;
     int marioSize;
-    int darkEaterTempo = 0;
+    int tempDarkEater = 0;
     int tempGold = 0;
     int tempFlame = 0;
     int tempShock = 0;
