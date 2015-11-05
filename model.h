@@ -60,6 +60,7 @@ public:
     void createGameOver(int x, int y);
     void createPeach(int x, int y);
     void createEncart(int x, int y, QString image);
+    void createCompleted(int x, int y);
     static int const brickSize = 50;
     static int const Hauteur = 500;
     static int const Longueur = 1000;

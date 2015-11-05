@@ -22,7 +22,7 @@ Model::Model()
     this->mushroom = new QList<Mushroom *>;
     this->golds = new QList<Gold *>;
     this->flames = new QList<Flame *>;
-    this->splashScreen = new SplashScreen(300, 100, ":images/go.png");
+    this->splashScreen = new SplashScreen(330, 170, ":images/go2.png");
     this->background = new QList<Background *>;
     this->header = new Header();
     this->compteur = new QList<Brick*> ;
@@ -30,8 +30,8 @@ Model::Model()
     this->mario = new Mario(200, 340);
     this->blood = new Blood(0,0);
     this->shock = new Shock(0,0);
-    getEncart()->setShow(true);
-    createEncart(getMario()->getRect().x(), getMario()->getRect().y() - 100, ":images/speech_gold.png");
+    this->encart = new Encart(0,0, "");
+    getEncart()->setType(EncartType::NONE);
 
     QFile fichier(":ModelMap.txt");
 
@@ -250,6 +250,10 @@ void Model::createMushroom(int x, int y){
 
 void Model::createGameOver(int x, int y){
     this->splashScreen = new SplashScreen(x, y, ":images/gameover.png");
+}
+
+void Model::createCompleted(int x, int y){
+    this->splashScreen = new SplashScreen(x, y, ":images/level_complete.png");
 }
 
 void Model::createPeach(int x, int y){

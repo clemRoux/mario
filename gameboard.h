@@ -33,7 +33,8 @@ public:
     void movementMysticTree();
     void movementEncart();
     void splashScreen();
-    void GameOver();
+    bool GameOver();
+    bool Completed();
     void hurted();
     void Peach();
     bool intersectBottomMario();

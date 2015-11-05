@@ -39,5 +39,8 @@
         <file>images/speech.png</file>
         <file>images/speech_gold.png</file>
         <file>images/speech_hell.png</file>
+        <file>images/speech_fuck.png</file>
+        <file>images/level_complete.png</file>
+        <file>images/go2.png</file>
     </qresource>
 </RCC>

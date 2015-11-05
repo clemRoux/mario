@@ -103,26 +103,25 @@ void View::paintEvent(QPaintEvent *)
     }
     painter.restore();
 
-    // Paint SplashScreen
-    painter.save();
-    if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
-        control->setOpacity(control->getOpacity() - 0.005);
-        painter.setOpacity(control->getOpacity());
-        control->getModel()->getSplashScreen()->accept(pVisitor);
-    }
-    else {
-        control->setOpacity(1);
-    }
-    painter.restore();
 
-    if(control->getModel()->getSplashScreen()->getIsSplashScreen())
-        control->getModel()->getSplashScreen()->accept(pVisitor);
+
+    //if(control->getModel()->getSplashScreen()->getIsSplashScreen())
+    //    control->getModel()->getSplashScreen()->accept(pVisitor);
 
     if(!control->getModel()->getBlood()->getStopBlood() && control->getModel()->getMario()->getIsHurted()){ // Paint Blood when hurted
         control->getModel()->getBlood()->accept(pVisitor);
     }
 
+    if(control->GameOver()){
+        painter.fillRect(QRect(0, 0, 1000, 500), QBrush(QColor(128, 128, 255, 230)));
+    }
+    else if(control->Completed())
+        painter.fillRect(QRect(0, 0, 1000, 500), QBrush(QColor(29, 153, 215, 230)));
 
+    // Paint SplashScreen
+    if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
+        control->getModel()->getSplashScreen()->accept(pVisitor);
+    }
 
     // Paint Mario's fantom when loosing a life
     /*
@@ -141,23 +140,30 @@ void View::paintEvent(QPaintEvent *)
 
 void View::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Right)
-        control->setIsMovingR(true);
-    else if(event->key() == Qt::Key_Left)
-        control->setIsMovingL(true);
-    else if(event->key() == Qt::Key_Down)
-        control->setIsAttacking(true);
-    else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
-        control->setIsJumping(true);
-        control->setXRelatif(-100);
+    if(!control->GameOver()){
+        if(event->key() == Qt::Key_Right)
+            control->setIsMovingR(true);
+        else if(event->key() == Qt::Key_Left)
+            control->setIsMovingL(true);
+        else if(event->key() == Qt::Key_Down)
+            control->setIsAttacking(true);
+        else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
+            control->setIsJumping(true);
+            control->setXRelatif(-100);
+        }
+        else
+            event->ignore();
     }
-    else if (event->key() == Qt::Key_Escape)
+    else if(event->key() == Qt::Key_Enter){
+
+    }
+
+    if (event->key() == Qt::Key_Escape)
     {
         control->stopGame();
         qApp->exit();
     }
-    else
-        event->ignore();
+
 }
 
 //----------------------------------------------------------------------------------------------------------------//

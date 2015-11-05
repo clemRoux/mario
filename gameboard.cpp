@@ -168,8 +168,6 @@ void GameBoard::movementDarkEater()
 void GameBoard::movementPeach()
 {
     if(model->getIsPeachBool()){
-        //qDebug() << "peachoooo";
-
         if(model->getPeach()->getIsMovingL()){
 
             if(peachTempo == 30){
@@ -325,9 +323,20 @@ bool GameBoard::intersectBottomMario()
         if(model->getMario()->intersectBottom(model->getFloors()->at(i)->getRect()))
             return true;
     }
+
     for(int i = 0; i<model->getSafes()->size(); i++){
-        if(model->getMario()->intersectBottom(model->getSafes()->at(i)->getRect()))
+        if(model->getMario()->intersectBottom(model->getSafes()->at(i)->getRect())){
+            if(getIsAttacking()){
+                if(model->getSafes()->at(i)->getCapacity()){
+                    if(model->getSafes()->at(i)->getCapacity() == 2){
+                        model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y());
+                        model->getSafes()->at(i)->setCapacity(1);
+                    }
+                }else
+                    model->getSafes()->at(i)->setDestroyed(true);
+            }
             return true;
+        }
     }
 
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
@@ -412,8 +421,10 @@ void GameBoard::intersectPeachMario()
         if(model->getMario()->intersect(model->getPeach()->getRect())){
             getModel()->getEncart()->setShow(true);
             encartTime = 0;
-            //model->getMario()->setGoldNumber(model->getMario()->getGoldNumber() + 100);
-            getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech.png");
+            if(getModel()->getEncart()->getType() != EncartType::LOVE){
+                getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech.png");
+                getModel()->getEncart()->setType(EncartType::LOVE);
+            }
         }
     }
 }
@@ -536,13 +547,15 @@ void GameBoard::intersectMysticTreeMario()
 
 void GameBoard::splashScreen()
 {
-    int x=model->getSplashScreen()->getRect().x();
-    int y=model->getSplashScreen()->getRect().y();
-    y--;
-    if(model->getSplashScreen()->getRect().bottom() > 0 && model->getSplashScreen()->getIsSplashScreen())
-        model->getSplashScreen()->move(x, y);
-    else
-        model->getSplashScreen()->setIsSplashScreen(false);
+    if(getModel()->getSplashScreen()->getType() == SplashScreenType::GO){
+        int x=model->getSplashScreen()->getRect().x();
+        int y=model->getSplashScreen()->getRect().y();
+        y--;
+        if(model->getSplashScreen()->getRect().bottom() > 0 && model->getSplashScreen()->getIsSplashScreen())
+            model->getSplashScreen()->move(x, y);
+        else
+            model->getSplashScreen()->setIsSplashScreen(false);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------//
@@ -600,12 +613,14 @@ void GameBoard::hurted()
         }
 
         this->getModel()->getBlood()->move(model->getMario()->getRect().x() - 20, model->getMario()->getRect().y() - 5);
-        //this->getModel()->getBlood()->move(150, - 100);
 
         if(getModel()->getMario()->getInvicible() == 0){
             getModel()->getEncart()->setShow(true);
             encartTime = 0;
-            getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_hell.png");
+            if(getModel()->getEncart()->getType() != EncartType::HURT){
+                getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_hell.png");
+                getModel()->getEncart()->setType(EncartType::HURT);
+            }
             model->getMario()->setLife(model->getMario()->getLife() - 1);
         }
         if(getModel()->getMario()->getInvicible() > 100){
@@ -613,6 +628,7 @@ void GameBoard::hurted()
             getModel()->getMario()->setIsHurted(false);
             getModel()->getBlood()->setStopBlood(false);
             getModel()->getMario()->setInvicible(0);
+            getModel()->getEncart()->setShow(false);
         }
         else{
             getModel()->getMario()->setInvicible(getModel()->getMario()->getInvicible() + 1);
@@ -661,11 +677,33 @@ void GameBoard::movementMysticTree(){
     }
 }
 
-void GameBoard::GameOver(){
-    if(getModel()->getMario()->getLife() <= 0 && !model->getSplashScreen()->getIsSplashScreen()){
-        getModel()->createGameOver(200, 100);
+bool GameBoard::GameOver(){
+    if(getModel()->getMario()->getLife() < 0 || getModel()->getMario()->getRect().y() > 500){
+        getModel()->getEncart()->setShow(true);
+        encartTime = 0;
+        //getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_fuck.png");
+        if(getModel()->getSplashScreen()->getType() != SplashScreenType::GAME_OVER){
+            getModel()->createGameOver(220, 100);
+            getModel()->getSplashScreen()->setType(SplashScreenType::GAME_OVER);
+        }
         model->getSplashScreen()->setIsSplashScreen(true);
+        return true;
     }
+    else
+        return false;
+}
+
+bool GameBoard::Completed(){
+    if(getModel()->getMario()->getGoldNumber() >= 100){
+        if(getModel()->getSplashScreen()->getType() != SplashScreenType::COMPLETED){
+            getModel()->createCompleted(360, 120);
+            getModel()->getSplashScreen()->setType(SplashScreenType::COMPLETED);
+        }
+        model->getSplashScreen()->setIsSplashScreen(true);
+        return true;
+    }
+    else
+        return false;
 }
 
 void GameBoard::Peach(){
@@ -676,8 +714,29 @@ void GameBoard::Peach(){
 }
 
 void GameBoard::encart(){
-    if(encartTime > 100)
-        getModel()->getEncart()->setShow(false);
-    else
-        encartTime++;
+    if(getModel()->getMario()->getGoldNumber() == 1){
+        if(getModel()->getEncart()->getType() != EncartType::GOLD){
+            getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_gold.png");
+            getModel()->getEncart()->setType(EncartType::GOLD);
+        }
+        encartTime = 0;
+        getModel()->getEncart()->setShow(true);
+    }
+
+    if(getModel()->getEncart()->getType() == EncartType::GOLD){
+        if(encartTime > 100){
+            getModel()->getEncart()->setShow(false);
+            getModel()->getEncart()->setType(EncartType::NONE);
+        }
+        else
+            encartTime++;
+    }
+    else if(getModel()->getEncart()->getType() == EncartType::FUCK || getModel()->getEncart()->getType() == EncartType::LOVE){
+        if(encartTime > 30){
+            getModel()->getEncart()->setShow(false);
+            getModel()->getEncart()->setType(EncartType::NONE);
+        }
+        else
+            encartTime++;
+    }
 }
