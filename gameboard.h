@@ -50,6 +50,8 @@ public:
     bool intersectLeftBrick(Brick *);
     void intersectMysticTreeMario();
     void intersectPeachMario();
+    void attackMysticTree();
+    void attackDarkEater();
     void goldAnim();
     void flameAnim();
     void shockAnim();

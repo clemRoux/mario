@@ -52,7 +52,6 @@ void View::paintEvent(QPaintEvent *)
         if(!control->getModel()->getDarkEater()->at(i)->isDestroyed())
             control->getModel()->getDarkEater()->at(i)->setSrcRect(QRect(DarkEater::currentFrame, 0, control->getModel()->getDarkEater()->at(i)->getRect().width(), control->getModel()->getDarkEater()->at(i)->getRect().height()));
         else{
-            control->getModel()->getDarkEater()->at(i)->setSprite(QString(":images/dark_eater_die.png"));
             control->getModel()->getDarkEater()->at(i)->setSrcRect(QRect(0, 0, control->getModel()->getDarkEater()->at(i)->getRect().width(), control->getModel()->getDarkEater()->at(i)->getRect().height()));
         }
         control->getModel()->getDarkEater()->at(i)->accept(pVisitor);
@@ -72,16 +71,16 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getMario()->setSrcRect(QRect(control->getModel()->getMario()->getCurrentFrame()+6, 1, control->getModel()->getMario()->getRect().width(), control->getModel()->getMario()->getRect().height()));
     }
 
-    control->getModel()->getMario()->accept(pVisitor);
-
-    if(control->getModel()->getEncart()->getShow())
-        control->getModel()->getEncart()->accept(pVisitor);
-
     if(control->getModel()->getIsPeachBool()){
         control->getModel()->getPeach()->setRect(QRect(control->getModel()->getPeach()->getRect().x(), control->getModel()->getPeach()->getRect().y(), control->getModel()->getPeach()->getMoveLSprite().width() / 4, control->getModel()->getPeach()->getMoveLSprite().height()));
         control->getModel()->getPeach()->setSrcRect(QRect(control->getModel()->getPeach()->getCurrentFrame(), 0, control->getModel()->getPeach()->getRect().width(), control->getModel()->getPeach()->getRect().height() + 4));
         control->getModel()->getPeach()->accept(pVisitor);
     }
+
+    control->getModel()->getMario()->accept(pVisitor);
+
+    if(control->getModel()->getEncart()->getShow())
+        control->getModel()->getEncart()->accept(pVisitor);
 
     // Paint Header Texts & Images
     painter.drawImage(control->getModel()->getHeader()->getRect().width() - 0, control->getModel()->getHeader()->getRect().height() / 8, control->getModel()->getHeader()->getGold());

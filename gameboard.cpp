@@ -101,8 +101,8 @@ void GameBoard::movementMario()
                 getModel()->getShock()->move(model->getMario()->getRect().x() - 50, model->getMario()->getRect().y());
             getModel()->getShock()->setShow(true);
             Shock::currentFrame = 0;
-            intersectDarkEaterMario();
-            intersectMysticTreeMario();
+            attackDarkEater();
+            attackMysticTree();
             setIsAttacking(false);
         }
 
@@ -325,15 +325,11 @@ bool GameBoard::intersectBottomMario()
         if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect()))
             return true;
     }
-   for(int i = 0; i<model->getDarkEater()->size(); i++){
-        if(model->getMario()->intersectBottom(model->getDarkEater()->at(i)->getRect()) && model->getDarkEater()->at(i)->isDestroyed())
+    for(int i = 0; i<model->getDarkEater()->size(); i++){
+        if(model->getMario()->intersectBottom(model->getDarkEater()->at(i)->getRect()) )
             return true;
     }
 
-    if(model->getPeach()){
-        if(model->getMario()->intersectBottom(model->getPeach()->getRect()))
-            return true;
-    }
     return false;
 }
 
@@ -358,7 +354,7 @@ bool GameBoard::intersectLeftMario()
     }
 
     for(int i = 0; i<model->getDarkEater()->size(); i++){
-        if(model->getMario()->intersectLeft(model->getDarkEater()->at(i)->getRect()) && model->getDarkEater()->at(i)->isDestroyed())
+        if(model->getMario()->intersectLeft(model->getDarkEater()->at(i)->getRect()))
             return true;
     }
 
@@ -384,7 +380,7 @@ bool GameBoard::intersectRightMario()
         if(model->getMario()->intersectRight(model->getPeach()->getRect()));
     }
     for(int i = 0; i<model->getDarkEater()->size(); i++){
-        if(model->getMario()->intersectRight(model->getDarkEater()->at(i)->getRect()) && model->getDarkEater()->at(i)->isDestroyed())
+        if(model->getMario()->intersectRight(model->getDarkEater()->at(i)->getRect()))
             return true;
     }
     return false;
@@ -427,25 +423,41 @@ void GameBoard::intersectFlameMario()
 void GameBoard::intersectDarkEaterMario()
 {
     for(int i = 0; i<model->getDarkEater()->size(); i++){
-        if(model->getMario()->intersect(model->getDarkEater()->at(i)->getRect())
-            && !model->getMario()->getUntouchable()
-            && !model->getDarkEater()->at(i)->isDestroyed())
-        {
-            if(model->getMario()->intersectBottom(model->getDarkEater()->at(i)->getRect()) && getIsAttacking())
-            {
-                getModel()->getShock()->move(model->getDarkEater()->at(i)->getRect().x() - 50, model->getDarkEater()->at(i)->getRect().y() - 50);
-                getModel()->getShock()->setShow(true);
-                Shock::currentFrame = 0;
-                model->getDarkEater()->at(i)->setDestroyed(true);
-            }
-            else{
-                model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
-                showBloodCount = 0;
-                this->model->getMario()->setIsHurted(true);
-            }
+        if((model->getMario()->intersectRight(model->getDarkEater()->at(i)->getRect())
+            || model->getMario()->intersectLeft(model->getDarkEater()->at(i)->getRect()))
+                && !model->getMario()->getUntouchable()
+                && !getIsAttacking()
+                && !model->getDarkEater()->at(i)->isDestroyed()){
+
+            model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
+            showBloodCount = 0;
+            this->model->getMario()->setIsHurted(true);
+        }
+
+        if(model->getMario()->intersectBottom(model->getDarkEater()->at(i)->getRect())
+                && !getModel()->getMario()->getIsMovingL()
+                && !getModel()->getMario()->getIsMovingR()
+                && !model->getDarkEater()->at(i)->isDestroyed()){
+            getModel()->getMario()->move(getModel()->getDarkEater()->at(i)->getRect().x(), getModel()->getMario()->getRect().y());
         }
     }
 }
+
+void GameBoard::attackDarkEater(){
+    for(int i = 0; i<model->getDarkEater()->size(); i++){
+        if(model->getMario()->intersect(model->getDarkEater()->at(i)->getRect())
+                && !model->getDarkEater()->at(i)->isDestroyed()
+                && getIsAttacking())
+        {
+            getModel()->getShock()->move(model->getDarkEater()->at(i)->getRect().x() - 50, model->getDarkEater()->at(i)->getRect().y() - 50);
+            getModel()->getShock()->setShow(true);
+            Shock::currentFrame = 0;
+            getModel()->getDarkEater()->at(i)->setSprite(QString(":images/dark_eater_die.png"));
+            model->getDarkEater()->at(i)->setDestroyed(true);
+        }
+    }
+}
+
 
 void GameBoard::intersectMushroomMario()
 {
@@ -502,6 +514,19 @@ bool GameBoard::intersectRightBrick(Brick * m)
 void GameBoard::intersectMysticTreeMario()
 {
     for(int i = 0; i<model->getMysticTrees()->size(); i++){
+        if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect())
+            || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
+                && !model->getMario()->getUntouchable()
+                && !model->getMysticTrees()->at(i)->isDead()){
+
+            showBloodCount = 0;
+            this->model->getMario()->setIsHurted(true);
+        }
+    }
+}
+
+void GameBoard::attackMysticTree(){
+    for(int i = 0; i<model->getMysticTrees()->size(); i++){
         if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect())
                 && !getModel()->getMysticTrees()->at(i)->isDead()
                 && model->getMario()->getIsAttacking()){
@@ -513,19 +538,9 @@ void GameBoard::intersectMysticTreeMario()
             Shock::currentFrame = 0;
 
         }
-        else if(model->getMario()->intersectBottom(model->getMysticTrees()->at(i)->getRect())){
-            return;
-        }
-        else if((model->getMario()->intersectRight(model->getMysticTrees()->at(i)->getRect())
-                 || model->getMario()->intersectLeft(model->getMysticTrees()->at(i)->getRect()))
-                && !model->getMario()->getUntouchable()
-                && !model->getMysticTrees()->at(i)->isDead()){
-
-            showBloodCount = 0;
-            this->model->getMario()->setIsHurted(true);
-        }
     }
 }
+
 
 //-----------------------------------------------------------------------------------------------------------------------//
 
@@ -579,10 +594,16 @@ void GameBoard::darkeaterAnim()
     }
     else
         tempDarkEater++;
-   for(int i = 0; i<model->getDarkEater()->size(); i++){
+    for(int i = 0; i<model->getDarkEater()->size(); i++){
         int x=model->getDarkEater()->at(i)->getRect().x();
-        if(!model->getDarkEater()->at(i)->isDestroyed())
+        if(!model->getDarkEater()->at(i)->isDestroyed()){
             moveBrick(x ,model->getDarkEater()->at(i));
+
+            if(model->getDarkEater()->at(i)->getMoveX())
+                getModel()->getDarkEater()->at(i)->setSprite(QString(":images/dark_eater_right.png"));
+            else
+                getModel()->getDarkEater()->at(i)->setSprite(QString(":images/dark_eater.png"));
+        }
     }
 }
 
@@ -596,7 +617,7 @@ void GameBoard::flameAnim()
     }
     else
         tempFlame++;
-   for(int i = 0; i<model->getFlame()->size(); i++){
+    for(int i = 0; i<model->getFlame()->size(); i++){
         int x=model->getFlame()->at(i)->getRect().x();
         moveBrick(x ,model->getFlame()->at(i));
     }
