@@ -253,8 +253,11 @@ void Model::brickOrganisation()
     }
 }
 
-void Model::createMushroom(int x, int y){
-    Mushroom *m = new Mushroom(x+9, y+10);
+void Model::createMushroom(int x, int y, bool up){
+    Mushroom *m = new Mushroom(x+9, y+10, up);
+    m->setYR(0);
+    m->setXR(0);
+    m->setStartY(m->getRect().y() + 50);
     mushroom->append(m);
 }
 

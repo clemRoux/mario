@@ -167,11 +167,20 @@ void GameBoard::movementMushroom()
     for(int i = 0; i<model->getMushroom()->size(); i++){
         int x=model->getMushroom()->at(i)->getRect().x();
         if(model->getMushroom()->at(i)->getMoveCount()>0){
+
             model->getMushroom()->at(i)->setmoveCount(model->getMushroom()->at(i)->getMoveCount() - 1);
-            if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario())
-                model->getMushroom()->at(i)->move(x-Brick::speed, model->getMushroom()->at(i)->getRect().y() - 1);
-            else
-                model->getMushroom()->at(i)->move(x, model->getMushroom()->at(i)->getRect().y() - 1);
+            if(getIsMovingR() && model->getMario()->getRect().x()>=350  && !intersectRightMario()){
+                if(getModel()->getMushroom()->at(i)->getUp())
+                    model->getMushroom()->at(i)->move(x-Brick::speed, model->getMushroom()->at(i)->getRect().y() - 1);
+                else
+                    model->getMushroom()->at(i)->move(x-Brick::speed, model->getMushroom()->at(i)->getRect().y() + 1);
+            }
+            else {
+                if(getModel()->getMushroom()->at(i)->getUp())
+                    model->getMushroom()->at(i)->move(x, model->getMushroom()->at(i)->getRect().y() - 1);
+                else
+                    model->getMushroom()->at(i)->move(x, model->getMushroom()->at(i)->getRect().y() + 1);
+            }
         }
         else
             moveBrick(x ,model->getMushroom()->at(i));
@@ -185,6 +194,7 @@ void GameBoard::moveBrick(int x ,Brick * b)
         speed=Brick::speed ;
     else
         speed = 0;
+
 
     if(intersectBottomBrick(b)){
         if(b->getMoveX()){
@@ -288,7 +298,7 @@ bool GameBoard::intersectTopMario()
         if(model->getMario()->intersectTop(model->getSafes()->at(i)->getRect())){
             if(model->getSafes()->at(i)->getCapacity()){
                 if(model->getSafes()->at(i)->getCapacity() == 2){
-                    model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y());
+                    model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y(), true);
                     model->getSafes()->at(i)->setCapacity(1);
                 }
             }else
@@ -311,7 +321,7 @@ bool GameBoard::intersectBottomMario()
             if(getIsAttacking()){
                 if(model->getSafes()->at(i)->getCapacity()){
                     if(model->getSafes()->at(i)->getCapacity() == 2){
-                        model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y());
+                        model->createMushroom(model->getSafes()->at(i)->getRect().x(), model->getSafes()->at(i)->getRect().y(), false);
                         model->getSafes()->at(i)->setCapacity(1);
                     }
                 }else
@@ -429,7 +439,13 @@ void GameBoard::intersectDarkEaterMario()
                 && !getIsAttacking()
                 && !model->getDarkEater()->at(i)->isDestroyed()){
 
-            model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
+            if(getModel()->getMario()->getIsMovingR() && !model->getDarkEater()->at(i)->getMoveX())
+                model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
+            else if(getModel()->getMario()->getIsMovingL() && model->getDarkEater()->at(i)->getMoveX())
+                model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
+            else if(!getModel()->getMario()->getIsMovingL() && !getModel()->getMario()->getIsMovingR())
+                model->getDarkEater()->at(i)->setMoveX(!model->getDarkEater()->at(i)->getMoveX());
+
             showBloodCount = 0;
             this->model->getMario()->setIsHurted(true);
         }
@@ -700,7 +716,7 @@ void GameBoard::movementMysticTree()
 }
 
 bool GameBoard::GameOver(){
-    if(getModel()->getMario()->getLife() < 0 || getModel()->getMario()->getRect().y() > 500){
+    if(getModel()->getMario()->getLife() < -10 || getModel()->getMario()->getRect().y() > 500){
         getModel()->getEncart()->setShow(true);
         encartTime = 0;
         //getModel()->createEncart(getModel()->getMario()->getRect().x(), getModel()->getMario()->getRect().y() - 100, ":images/speech_fuck.png");

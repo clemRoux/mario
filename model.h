@@ -52,7 +52,7 @@ public:
     inline Encart *getEncart(){ return encart; }
     inline int getSpeed(){ return speed; }
     inline void setSpeed(int speed){ this->speed = speed; }
-    void createMushroom(int, int);
+    void createMushroom(int, int, bool);
     bool getDarkEaterBool(){ return darkEaterBool; }
     void setDarkEaterBool(bool value){ this->darkEaterBool = value; }
     bool getIsPeachBool(){ return isPeachBool; }
