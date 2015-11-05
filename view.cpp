@@ -113,10 +113,10 @@ void View::paintEvent(QPaintEvent *)
     }
 
     if(control->GameOver()){
-        painter.fillRect(QRect(0, 0, 1000, 500), QBrush(QColor(128, 128, 255, 230)));
+        painter.fillRect(QRect(0, 0, Model::Longueur, Model::Hauteur), QBrush(QColor(128, 128, 255, 230)));
     }
     else if(control->Completed())
-        painter.fillRect(QRect(0, 0, 1000, 500), QBrush(QColor(29, 153, 215, 230)));
+        painter.fillRect(QRect(0, 0, Model::Longueur, Model::Hauteur), QBrush(QColor(29, 153, 215, 230)));
 
     // Paint SplashScreen
     if(control->getModel()->getSplashScreen()->getIsSplashScreen()){
@@ -145,7 +145,7 @@ void View::keyPressEvent(QKeyEvent *event)
             control->setIsMovingR(true);
         else if(event->key() == Qt::Key_Left)
             control->setIsMovingL(true);
-        else if(event->key() == Qt::Key_Down)
+        else if(event->key() == Qt::Key_Down && control->getIsJumping())
             control->setIsAttacking(true);
         else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
             control->setIsJumping(true);
