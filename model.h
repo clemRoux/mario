@@ -44,7 +44,7 @@ public:
     inline QList<Mushroom*> *getMushroom(){ return mushroom; }
     inline QList<Gold*> *getGold(){ return golds; }
     inline QList<Flame*> *getFlame(){ return flames; }
-    inline DarkEater *getDarkEater(){ return darkEater; }
+    inline QList<DarkEater*> *getDarkEater(){ return darkEater; }
     inline QList<MysticTree*> *getMysticTrees(){ return mysticTrees; }
     inline Blood *getBlood(){ return blood; }
     inline Peach *getPeach(){ return peach; }
@@ -75,7 +75,7 @@ private:
     QList<Gold*> *golds;
     QList<Flame*> *flames;
     QList<MysticTree*> *mysticTrees;
-    DarkEater *darkEater;
+    QList<DarkEater *> *darkEater;
     Mario *mario;
     Peach * peach;
     SplashScreen *splashScreen;
