@@ -2,8 +2,8 @@
 #define GAMEBOARD_H
 
 #include <QWidget>
-#include <QKeyEvent>
-#include <QMutableMapIterator>
+//#include <QKeyEvent>
+//#include <QMutableMapIterator>
 #include <QObject>
 
 #include "safe.h"
@@ -25,13 +25,13 @@ public:
     void stopGame();
     void movementMario();
     void moveXMario(int );
-    void movementMap();
     void movementBackground();
-    void movementMushroom();
+    void movementMushroom(int );
     void movementPeach();
     void moveBrick(int ,Brick *);
-    void movementMysticTree();
+    void movementMysticTree(int );
     void movementEncart();
+    void movementMap(int );
     void splashScreen();
     bool GameOver();
     bool Completed();
@@ -41,21 +41,24 @@ public:
     bool intersectTopMario();
     bool intersectRightMario();
     bool intersectLeftMario();
-    void intersectGoldMario();
-    void intersectMushroomMario();
-    void intersectDarkEaterMario();
-    void intersectFlameMario();
+    void intersectGoldMario(int );
+    void intersectMushroomMario(int );
+    void intersectYDarkEaterMario(int );
+    void intersectXDarkEaterMario(int );
+    //void intersectDarkEaterMario();
+    void intersectFlameMario(int );
     bool intersectBottomBrick(Brick *);
     bool intersectRightBrick(Brick *);
     bool intersectLeftBrick(Brick *);
-    void intersectMysticTreeMario();
+    void intersectMysticTreeMario(int i);
     void intersectPeachMario();
-    void attackMysticTree();
-    void attackDarkEater();
+    void attackMysticTree(int i);
+    //void attackDarkEater();
     void goldAnim();
-    void flameAnim();
+    void flameAnim(int );
     void shockAnim();
-    void darkeaterAnim();
+    void darkeaterAnim(int );
+    void BackgroundAnim(int );
     void fantom();
     void encart();
     inline bool getIsMovingR(){ return getModel()->getMario()->getIsMovingR(); }
@@ -68,20 +71,19 @@ public:
     inline void setIsAttacking(bool is){ getModel()->getMario()->setIsAttacking(is); }
     inline void setIsGameOver(bool is){ this->isGameOver = is; }
     inline bool getIsGameOVer(){ return isGameOver; }
+    bool getMoveMap(){return moveMap;}
     inline std::tuple<> getAllObjects();
     inline Model *getModel(){ return this->model; }
     inline qreal getOpacity(){ return opacity; }
     inline void setOpacity(qreal opacity){this->opacity = opacity; }
     inline int getXRelatif(){ return xRelatif; }
     inline void setXRelatif(int x){this->xRelatif = x; }
-    void timerEvent(QTimerEvent *event);
 
 
 
 private:
     Model *model;
     View *view;
-    int timerId;
     bool gameStarted;
     int xRelatif;
     int yRelatif;
@@ -97,11 +99,12 @@ private:
     qreal opacity = 1;
     bool isLittle;
     bool isGameOver = false;
+    bool moveMap=false;
     int showBloodCount = 0;
     int encartTime = 0;
 
-signals:
-    void sendPaintIt();
+/*signals:
+    void sendPaintIt();*/
 
 };
 #endif // GAMEBOARD_H

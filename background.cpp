@@ -4,7 +4,7 @@
 
 Background::Background(int x, int y ) : Brick(x,y, ":images/background.png")
 {
-
+     this->rect.setSize(QSize(getImage().width()+4,getImage().height()));
 }
 
 Background::~Background()

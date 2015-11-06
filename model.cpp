@@ -216,23 +216,23 @@ void Model::brickOrganisation()
         compteur->removeAt(compteur->indexOf(compteur->first()));
     }
 
-    for(int i = 0; i<floors->size(); i++){
+    /*for(int i = 0; i<floors->size(); i++){
         if (floors->at(i)->getRect().x()<=-brickSize || floors->at(i)->isDestroyed()){
             floors->removeAt(i);
         }
-    }
+    }*/
 
-    for(int i = 0; i<safes->size(); i++){
+    /*for(int i = 0; i<safes->size(); i++){
         if (safes->at(i)->getRect().x()<=-brickSize || safes->at(i)->isDestroyed()){
             safes->removeAt(i);
         }
-    }
+    }*/
 
-    for(int i = 0; i<golds->size(); i++){
+    /*for(int i = 0; i<golds->size(); i++){
         if (golds->at(i)->getRect().x()<=-brickSize || golds->at(i)->isDestroyed()){
             golds->removeAt(i);
         }
-    }
+    }*/
 
     for(int i = 0; i<mushroom->size(); i++){
         if (mushroom->at(i)->getRect().x()<=-brickSize || mushroom->at(i)->isDestroyed()){

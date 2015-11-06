@@ -25,20 +25,18 @@ class View : public QWidget
 
 public:
     View(QWidget *parent = 0);
+     ~View();
     void setControl(GameBoard *control){ this->control = control; }
 
 private:
     void paintEvent(QPaintEvent *event);
-    void timerEvent(QTimerEvent *event){}
+    void timerEvent(QTimerEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
     GameBoard *control;
     int marioSize;
-
-public slots:
-    void paintIt(){ update(); }
-
+    int timerId;
 };
 
 #endif // VIEW_H
