@@ -82,6 +82,14 @@ Model::Model()
                     }
                 }
             }
+            else if (stock.left(6)=="LIGNEf")
+            {
+                for(int i=0;i<stock.size();++i){
+                    if(stock.at(i).isDigit() || stock.at(i).isLetter()){
+                        ligne6.append(stock.at(i));
+                    }
+                }
+            }
         }
         fichier.close();
     }
@@ -208,6 +216,7 @@ void Model::brickOrganisation()
         createBrick(ligne3,3,compteur->last()->getRect().x());
         createBrick(ligne4,4,compteur->last()->getRect().x());
         createBrick(ligne5,5,compteur->last()->getRect().x());
+        createBrick(ligne6,6,compteur->last()->getRect().x());
         compteur->append(b);
         mapPosition++;
     }

@@ -89,6 +89,7 @@ private:
     QList<QChar> ligne3;
     QList<QChar> ligne4;
     QList<QChar> ligne5;
+    QList<QChar> ligne6;
     int backgroundCount=0;
     int mapPosition = 7;
     int speed = 4;

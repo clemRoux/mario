@@ -29,10 +29,10 @@ void View::paintEvent(QPaintEvent *event)
         }
     }
 
-  if(control->getMoveMap())
+
 
         for(int i = control->getModel()->getBackground()->indexOf(control->getModel()->getBackground()->first()); i<control->getModel()->getBackground()->size(); i++){
-
+  if(control->getMoveMap())
             control->BackgroundAnim(i);
           // painter.drawPixmap(event->rect(), control->getModel()->getBackground()->at(i)->getSprite(), control->getModel()->getBackground()->at(i)->getSrcRect());
                 control->getModel()->getBackground()->at(i)->accept(pVisitor);

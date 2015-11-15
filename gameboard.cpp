@@ -692,7 +692,7 @@ bool GameBoard::GameOver(){
 }
 
 bool GameBoard::Completed(){
-    if(getModel()->getMario()->getGoldNumber() >= 100){
+    if(getModel()->getMario()->getGoldNumber() >= 200){
         if(getModel()->getSplashScreen()->getType() != SplashScreenType::COMPLETED){
             getModel()->createCompleted(360, 120);
             getModel()->getSplashScreen()->setType(SplashScreenType::COMPLETED);
@@ -705,7 +705,7 @@ bool GameBoard::Completed(){
 }
 
 void GameBoard::Peach(){
-    if(getModel()->getMario()->getGoldNumber() > 2 && !getModel()->getIsPeachBool()){
+    if(getModel()->getMario()->getGoldNumber() > 100 && !getModel()->getIsPeachBool()){
         getModel()->createPeach(getModel()->getMario()->getRect().x() + 200, 340);
         getModel()->setIsPeachBool(true);
     }
