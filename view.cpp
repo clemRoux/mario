@@ -1,6 +1,5 @@
 #include "view.h"
 #include <QPainter>
-#include <QTimer>
 #include <iostream>
 #include <QApplication>
 #include <QDebug>
@@ -10,48 +9,40 @@
 #include "paintvisitor.h"
 
 View::View(QWidget *parent): QWidget(parent)
-{
-    timerId = startTimer(15);
-}
+{}
 
 View::~View()
 {
-    killTimer(timerId);
     std::cout << ("View deleted\n");
 }
 
-void View::timerEvent(QTimerEvent *)
-{
-    update();
-}
 
-void View::paintEvent(QPaintEvent *)
+void View::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter painter(this);
-    PaintVisitor *pVisitor = new PaintVisitor(&painter);
+   PaintVisitor *pVisitor = new PaintVisitor(&painter);
 
-    control->encart();
-    control->splashScreen();
-    control->movementMario();
-    control->movementPeach();
-    control->movementEncart();
-    control->getModel()->brickOrganisation();
-    control->goldAnim();
-    control->intersectPeachMario();
-    control->shockAnim();
-    control->hurted();
-    control->GameOver();
-    control->Peach();
-
-    for(int i = 0; i<control->getModel()->getCompteur()->size(); i++){
-        if(control->getMoveMap())
+    for(int i = control->getModel()->getCompteur()->indexOf(control->getModel()->getCompteur()->first()); i<control->getModel()->getCompteur()->size(); i++){
+        if(control->getMoveMap()){
             control->getModel()->getCompteur()->at(i)->moveBrick();
+        }
     }
 
-    for(int i = 0; i<control->getModel()->getBackground()->size(); i++){
-        if(control->getMoveMap())
+  if(control->getMoveMap())
+
+        for(int i = control->getModel()->getBackground()->indexOf(control->getModel()->getBackground()->first()); i<control->getModel()->getBackground()->size(); i++){
+
             control->BackgroundAnim(i);
-        control->getModel()->getBackground()->at(i)->accept(pVisitor);
+          // painter.drawPixmap(event->rect(), control->getModel()->getBackground()->at(i)->getSprite(), control->getModel()->getBackground()->at(i)->getSrcRect());
+                control->getModel()->getBackground()->at(i)->accept(pVisitor);
+
+      }
+
+    for(int i = 0; i<control->getModel()->getMushroom()->size(); i++){
+        control->intersectMushroomMario(i);
+        control->movementMushroom(i);
+        control->getModel()->getMushroom()->at(i)->accept(pVisitor);
     }
 
     for(int i = 0; i<control->getModel()->getMysticTrees()->size(); i++){
@@ -61,8 +52,9 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getMysticTrees()->at(i)->accept(pVisitor);
     }
 
+
     for(int i = 0; i<control->getModel()->getFloors()->size(); i++){
-        if(control->getMoveMap())
+    if(control->getMoveMap())
             control->getModel()->getFloors()->at(i)->moveBrick();
         control->getModel()->getFloors()->at(i)->accept(pVisitor);
     }
@@ -81,16 +73,10 @@ void View::paintEvent(QPaintEvent *)
         control->getModel()->getGold()->at(i)->accept(pVisitor);
     }
 
-    for(int i = 0; i<control->getModel()->getMushroom()->size(); i++){
-        control->intersectMushroomMario(i);
-        control->movementMushroom(i);
-        control->getModel()->getMushroom()->at(i)->accept(pVisitor);
-    }
-
     for(int i = 0; i<control->getModel()->getFlame()->size(); i++){
         control->intersectFlameMario(i);
-        control->flameAnim(i);
-        control->getModel()->getFlame()->at(i)->accept(pVisitor);
+        //control->flameAnim(i);
+      control->getModel()->getFlame()->at(i)->accept(pVisitor);
     }
 
     for(int i = 0; i<control->getModel()->getDarkEater()->size(); i++){
@@ -169,7 +155,7 @@ void View::keyPressEvent(QKeyEvent *event)
             control->setIsMovingL(true);
         else if(event->key() == Qt::Key_Down && control->getIsJumping())
             control->setIsAttacking(true);
-        else if(event->key() == Qt::Key_Space && control->intersectBottomMario()){
+        else if(event->key() == Qt::Key_Space && control->intersectBottomMario(0)){
             control->setIsJumping(true);
             control->setXRelatif(-100);
         }

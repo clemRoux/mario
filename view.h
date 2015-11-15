@@ -30,13 +30,13 @@ public:
 
 private:
     void paintEvent(QPaintEvent *event);
-    void timerEvent(QTimerEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
     GameBoard *control;
     int marioSize;
-    int timerId;
+    //int timerId;
+    QTimer *autoMoveTimer;
 };
 
 #endif // VIEW_H

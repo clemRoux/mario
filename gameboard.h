@@ -37,15 +37,14 @@ public:
     bool Completed();
     void hurted();
     void Peach();
-    bool intersectBottomMario();
-    bool intersectTopMario();
-    bool intersectRightMario();
-    bool intersectLeftMario();
+    bool intersectBottomMario(int );
+    bool intersectTopMario(int );
+    bool intersectRightMario(int );
+    bool intersectLeftMario(int );
     void intersectGoldMario(int );
     void intersectMushroomMario(int );
     void intersectYDarkEaterMario(int );
     void intersectXDarkEaterMario(int );
-    //void intersectDarkEaterMario();
     void intersectFlameMario(int );
     bool intersectBottomBrick(Brick *);
     bool intersectRightBrick(Brick *);
@@ -53,9 +52,8 @@ public:
     void intersectMysticTreeMario(int i);
     void intersectPeachMario();
     void attackMysticTree(int i);
-    //void attackDarkEater();
     void goldAnim();
-    void flameAnim(int );
+    void flameAnim();
     void shockAnim();
     void darkeaterAnim(int );
     void BackgroundAnim(int );
@@ -79,9 +77,9 @@ public:
     inline int getXRelatif(){ return xRelatif; }
     inline void setXRelatif(int x){this->xRelatif = x; }
 
-
-
 private:
+    void timerEvent(QTimerEvent *event);
+
     Model *model;
     View *view;
     bool gameStarted;
@@ -102,9 +100,6 @@ private:
     bool moveMap=false;
     int showBloodCount = 0;
     int encartTime = 0;
-
-/*signals:
-    void sendPaintIt();*/
-
+    int timerId=0;
 };
 #endif // GAMEBOARD_H
