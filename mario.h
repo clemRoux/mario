@@ -20,9 +20,13 @@ public:
     void setIsLittle(bool little){ this->isLittle = little; }
     inline bool getIsHurted(){ return isHurted; }
     inline void setIsHurted(bool hurt){ this->isHurted = hurt; }
+    int getGoldNumberWhenMushroom(){ return goldNumberWhenMushroom; }
+    void setGoldNumberWhenMushroom(int goldNumber){ this->goldNumberWhenMushroom = goldNumber; }
+
 
 private:
     int goldNumber;
+    int goldNumberWhenMushroom;
     bool isLittle = false;
     bool isHurted = false;
     bool hurt = false;

@@ -63,6 +63,8 @@ void GameBoard::stopGame()
 void GameBoard::movementMario()
 {
     int y=model->getMario()->getRect().y();
+    if(model->getMario()->getIsLittle() && (model->getMario()->getGoldNumber() > model->getMario()->getGoldNumberWhenMushroom() + 30))
+        model->getMario()->setIsLittle(false);
 
     if(getIsJumping()){
         if(getIsAttacking()){
@@ -437,6 +439,7 @@ void GameBoard::intersectMushroomMario(int i)
         if(model->getMario()->intersect(model->getMushroom()->at(i)->getRect())){
             model->getMushroom()->at(i)->setDestroyed(true);
             model->getMario()->setIsLittle(true);
+            model->getMario()->setGoldNumberWhenMushroom(model->getMario()->getGoldNumber());
             model->getMario()->setLife(model->getMario()->getLife() + 1);
             Brick::speed = 6;
         }
@@ -677,7 +680,7 @@ void GameBoard::movementMysticTree(int i)
 }
 
 bool GameBoard::GameOver(){
-    if(getModel()->getMario()->getLife() < -10 || getModel()->getMario()->getRect().y() > 500){
+    if(getModel()->getMario()->getLife() < 0 || getModel()->getMario()->getRect().y() > 500){
         getModel()->getEncart()->setShow(true);
         encartTime = 0;
         if(getModel()->getSplashScreen()->getType() != SplashScreenType::GAME_OVER){
